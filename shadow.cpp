@@ -134,7 +134,7 @@ CShadow * CShadow::Create(const D3DXVECTOR3 & pos)
 		pShadow->Init();
 		//Ý’èˆ—
 		pShadow->SetPosition(pos);
-		pShadow->SetSize(D3DXVECTOR3(5.0f, 0.0f, 5.0f));
+		pShadow->SetSize(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 	else
 	{

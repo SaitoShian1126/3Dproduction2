@@ -44,8 +44,6 @@ public:
 private:
 	static CMeshField *m_pMeshField;	
 	CFade *m_pFade;						//フェード
-
-	int nCnt;
 };
 
 #endif

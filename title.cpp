@@ -73,9 +73,8 @@ void CTitle::Update()
 {
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
-	//CJoyPad *pInputJoyKey = CApplication::GetInputJoyKey();
 	
-	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE)
+	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_TITLE)
 	{
 		CFade::SetFade(CApplication::MODE_GAME);
 	}

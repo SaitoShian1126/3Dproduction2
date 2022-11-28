@@ -220,7 +220,7 @@ void CApplication::SetMode(MODE mode)
 		m_pMode = CGame::Create();
 		break;
 	case CApplication::MODE_RESULT:
-		m_pMode = CResult::Create();
+		m_pMode = CResult::Create(CResult::TYPE_GAMEOVER);
 		break;
 	case CApplication::MODE_RANKING:
 		m_pMode = CRanking::Create();

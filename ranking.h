@@ -44,7 +44,7 @@ private:
 	static CNumber *m_pNumber[MAX_RANKINGRANK][SCORE_DIGIT];	//数字のポインタ
 	static int m_aData[5];										//外部ファイルのデータ
 	static int m_aRanking;										//取った得点
-	LPDIRECT3DTEXTURE9 m_pTextureRanking[3] = {};				//テクスチャへのポインタ
+	LPDIRECT3DTEXTURE9 m_pTextureRanking[2] = {};				//テクスチャへのポインタ
 	CObject2D *m_pObject[2];									//オブジェクトのポインタ
 	CFade *m_pFade;												//フェード
 };

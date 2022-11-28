@@ -43,18 +43,13 @@ HRESULT CRanking::Init(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data/TEXTURE/result.jpg",
+		"data/TEXTURE/ranking.png",
 		&m_pTextureRanking[0]);
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data/TEXTURE/ranking_logo.png",
+		"data/TEXTURE/number.png",
 		&m_pTextureRanking[1]);
-
-	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		"data/TEXTURE/number000.png",
-		&m_pTextureRanking[2]);
 
 	//********************************
 	//メンバ変数の初期化
@@ -64,16 +59,12 @@ HRESULT CRanking::Init(void)
 	m_pObject[0]->SetSize(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 	m_pObject[0]->BindTexture(m_pTextureRanking[0]);
 
-	m_pObject[1] = CObject2D::Create(D3DXVECTOR3(640.0f, 100.0f, 0.0f));
-	m_pObject[1]->SetSize(D3DXVECTOR3(300.0f, 50.0f, 0.0f));
-	m_pObject[1]->BindTexture(m_pTextureRanking[1]);
-
 	for (int nCntRanking = 0; nCntRanking < 5; nCntRanking++)
 	{
 		for (int nCnt = 0; nCnt < SCORE_DIGIT; nCnt++)
 		{
-			m_pNumber[nCntRanking][nCnt] = CNumber::Create(D3DXVECTOR3(425.0f + 75.0f * nCnt, 260.0f + 75.0f * nCntRanking, 0.0f), D3DXVECTOR3(25.0f, 25.0f, 0.0f));
-			m_pNumber[nCntRanking][nCnt]->BindTexture(m_pTextureRanking[2]);
+			m_pNumber[nCntRanking][nCnt] = CNumber::Create(D3DXVECTOR3(425.0f + 90.0f * nCnt, 260.0f + 75.0f * nCntRanking, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 0.0f));
+			m_pNumber[nCntRanking][nCnt]->BindTexture(m_pTextureRanking[1]);
 		}
 	}
 
@@ -104,7 +95,7 @@ void CRanking::Update()
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
 
-	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE)
+	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_RANKING)
 	{
 		SaveRanking();
 		CFade::SetFade(CApplication::MODE_TITLE);

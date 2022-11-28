@@ -117,7 +117,7 @@ HRESULT CNumber::Load(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data/TEXTURE/number000.png",
+		"data/TEXTURE/number.png",
 		&m_pTextureNumber);
 
 	return S_OK;
