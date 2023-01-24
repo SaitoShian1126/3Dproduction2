@@ -17,7 +17,7 @@
 // 静的メンバ変数宣言
 //============================================
 LPD3DXFONT CDebugProc::m_pFont = nullptr;
-char CDebugProc::m_aStr[1024] = {};
+char CDebugProc::m_aStr[0xfff] = {};
 
 //============================================
 // デバッグ表示のコンストラクタ
@@ -80,10 +80,18 @@ void CDebugProc::Uninit(void)
 //============================================
 void CDebugProc::Print(const char * pFormat, ...)
 {
-	va_list args;					//可変引数を使用するための関数 args(引数)
-	va_start(args, pFormat);		//第一引数va_listの数値,第二引数文字列
-	vsprintf(m_aStr, pFormat, args);//結果格納用アドレス,表示させる文字列,数値
-	va_end(args);					//終了するために必要
+	// 変数
+	char aStrCpy[0xfff] = {};
+
+	// リストの作成
+	va_list args;
+	va_start(args, pFormat);
+	vsprintf(&aStrCpy[0], pFormat, args);
+	va_end(args);
+
+#ifdef _DEBUG
+	strcat(&m_aStr[0], &aStrCpy[0]);
+#endif // DEBUG
 }
 
 //デバッグ表示の描画処理
@@ -93,4 +101,6 @@ void CDebugProc::Draw(void)
 
 	// テキスト描画
 	m_pFont->DrawText(NULL, m_aStr, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff));
+
+	m_aStr[0] = '\0';
 }

@@ -49,11 +49,11 @@ public:
 	void Draw(void);					//リザルトの描画処理
 
 	static void SetType(TYPE type);		//リザルトの種類の設定
-	static CResult *Create(TYPE type);	//生成
+	static CResult *Create();			//生成
 
 private:
 	static LPDIRECT3DTEXTURE9 m_pTextureResult[2];	//テクスチャへのポインタ
-	static TYPE m_type;								//リザルトの種類
+	static TYPE m_TypeNumber;								//リザルトの種類
 	CObject2D *m_pObject;							//オブジェクトのポインタ
 	CFade *m_pFade;									//フェード
 };

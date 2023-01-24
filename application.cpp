@@ -20,6 +20,7 @@
 #include "fade.h"
 #include "input.h"
 #include "debug.h"
+#include "player.h"
 
 //============================================
 // Ã“Iƒƒ“ƒo•Ï”éŒ¾
@@ -92,7 +93,7 @@ HRESULT CApplication::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 	m_pLight->Init();
 	m_pDebug->Init();
 
-	CFade::Create(MODE_TITLE);
+	CFade::Create(MODE_GAME);
 
 	return S_OK;
 }
@@ -220,7 +221,7 @@ void CApplication::SetMode(MODE mode)
 		m_pMode = CGame::Create();
 		break;
 	case CApplication::MODE_RESULT:
-		m_pMode = CResult::Create(CResult::TYPE_GAMEOVER);
+		m_pMode = CResult::Create();
 		break;
 	case CApplication::MODE_RANKING:
 		m_pMode = CRanking::Create();

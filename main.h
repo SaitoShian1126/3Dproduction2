@@ -50,6 +50,8 @@ const int SCREEN_HEIGHT = 720;
 // 頂点フォーマット
 const DWORD FVF_VERTEX_2D = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 #define FVF_VERTEX_3D	(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//座標,法線,カラー	※テクスチャも使う場合はここに追加(構造体にも追加)
+// 線頂点フォーマット
+const DWORD FVF_VERTEX_LINE = (D3DFVF_XYZ | D3DFVF_DIFFUSE);
 
 //============================================
 // 構造体定義

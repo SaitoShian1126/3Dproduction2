@@ -15,6 +15,7 @@
 #include "object.h"
 #include "application.h"
 #include "debug.h"
+#include "input.h"
 
 //============================================
 // レンダリングのコンストラクタ
@@ -95,6 +96,25 @@ HRESULT CRenderer::Init(HWND hWnd, bool bWindow)
 	m_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	m_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
+	////フォグの有効設定
+	//m_pD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
+
+	////フォグカラー
+	//m_pD3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+
+	////フォグのモード(範囲指定:D3DFOG_LINEAR,密度指定:D3DFOG_EXP)
+	//m_pD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_EXP);
+
+	//////範囲指定(※LINEAR時に指定)
+	////int fFogStartPos = 100;
+	////int fFogEndPos = 1000;
+	////m_pD3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&fFogStartPos));
+	////m_pD3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&fFogEndPos));
+
+	////密度指定(※EXP時に指定)
+	//float fFogDensity = 0.004f;
+	//m_pD3DDevice->SetRenderState(D3DRS_FOGDENSITY, *(DWORD*)(&fFogDensity));
+
 	// サンプラーステートの設定
 	m_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	m_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
@@ -136,6 +156,24 @@ void CRenderer::Uninit(void)
 //============================================
 void CRenderer::Update(void)
 {
+	// インプットのインスタンス生成
+	CInput *pInput = CApplication::GetInput();
+	//============================================
+	//	ワイヤーフレーム
+	//============================================
+	//F1キーでワイヤーフレームを表示
+	if (pInput->GetKeyboardTrigger(DIK_F1) == true)
+	{//F1キーが押された
+	 //ワイヤーフレームモードの設定
+		m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	}
+	//F1キーを放したらワイヤーフレーム非表示
+	else if (pInput->GetKeyboardTrigger(DIK_F2) == true)
+	{
+		//ワイヤーフレームモードの設定
+		m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_FORCE_DWORD);
+	}
+
 	//すべての更新処理
 	CObject3D::UpdateAll();
 }
@@ -151,7 +189,6 @@ void CRenderer::Draw(void)
 	D3DVIEWPORT9 viewport;		//ビューポート
 	pDevice->GetViewport(&viewport);
 
-	//カメラの設定処理
 	CApplication::GetCamera()->SetCamera();
 
 	// バックバッファ＆Ｚバッファのクリア

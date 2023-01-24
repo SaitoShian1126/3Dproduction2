@@ -33,15 +33,15 @@ class CFade;
 class CTitle : public CMode
 {
 public:
-	CTitle();					//コンストラクタ
-	~CTitle() ;					//デストラクタ
+	CTitle();				//コンストラクタ
+	~CTitle() ;				//デストラクタ
 
-	HRESULT Init(void) ;		//タイトルの初期化処理
-	void Uninit(void) ;			//タイトルの終了処理
-	void Update(void) ;			//タイトルの更新処理
-	void Draw(void);			//タイトルの描画処理
+	HRESULT Init(void);		//タイトルの初期化処理
+	void Uninit(void);		//タイトルの終了処理
+	void Update(void);		//タイトルの更新処理
+	void Draw(void);		//タイトルの描画処理
 
-	void SetColor(float Red, float Green, float Blue, float α);									//色の設定
+	void SetColor(float Red, float Green, float Blue, float α);		//色の設定
 	static CTitle *Create();			//生成
 
 private:

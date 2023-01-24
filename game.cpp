@@ -22,11 +22,27 @@
 #include "input.h"
 #include "fade.h"
 #include "result.h"
+#include "number.h"
+#include "score.h"
+#include "objectbase.h"
+#include "enemy.h"
+#include "model.h"
+#include "particle.h"
+#include "boss.h"
+#include "gasolene_gimmick.h"
+#include "bullet.h"
+#include "explosion.h"
+#include "spawn.h"
 
 //============================================
 // 静的メンバ変数宣言
 //============================================
 CMeshField *CGame::m_pMeshField = nullptr;
+CScore *CGame::m_pScore = nullptr;
+CGasolene_Gimmick *CGame::m_pGasoleneGimmick[MAX_GASOLENE] = {};
+CModel *CGame::m_Model = nullptr;
+CPlayer *CGame::m_pPlayer = nullptr;
+CSpawn *CGame::m_pSpawn = nullptr;
 
 //============================================
 // ゲームのコンストラクタ
@@ -58,13 +74,24 @@ HRESULT CGame::Init(void)
 	//============================================
 	//	テクスチャ読み込み
 	//============================================
+	CNumber::Load();	//ナンバーテクスチャの読み込み
 
 	//============================================
 	//	オブジェクトの生成
 	//============================================
-	m_pMeshField = CMeshField::Create(D3DXVECTOR3(0.0f,0.0f,0.0f));
-	CPlayer::Create(D3DXVECTOR3(0.0f,0.0f,0.0f));
-	CBillboard::Create(D3DXVECTOR3(50.0f, 20.0f, 0.0f));
+	m_pMeshField = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_Model = CModel::Create();
+	m_pScore = CScore::Create();
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-75.0f, 0.0f, 60.0f));
+	CBoss::Create(D3DXVECTOR3(-90.0f, 0.0f, 115.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pSpawn = CSpawn::Create();
+	/*for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
+	{
+		m_pEnemy[nCnt] = CEnemy::Create(D3DXVECTOR3(100.0f * nCnt + 50.0f, 0.0f, 0.0f), D3DXVECTOR3());
+	}*/
+	//m_pGasoleneGimmick[0] = CGasolene_Gimmick::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pGasoleneGimmick[0] = CGasolene_Gimmick::Create(D3DXVECTOR3(250.0f, 0.0f, -640.0f));
+	//CParticle::Create();
 
 	return S_OK;
 }
@@ -77,6 +104,7 @@ void CGame::Uninit(void)
 	//============================================
 	//	テクスチャ破棄
 	//============================================
+	CNumber::Unload();		//ナンバーテクスチャの破棄
 
 	CObject::Release();
 }
@@ -86,13 +114,7 @@ void CGame::Uninit(void)
 //============================================
 void CGame::Update()
 {
-	//インプットのインスタンス生成
-	CInput *pInput = CApplication::GetInput();
 
-	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_GAME)
-	{
-		CFade::SetFade(CApplication::MODE_RESULT);
-	}
 }
 
 //============================================

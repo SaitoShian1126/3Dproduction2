@@ -33,7 +33,7 @@ public:
 
 private:
 	static LPD3DXFONT m_pFont;	//フォント
-	static char m_aStr[1024];	//表示する文字列
+	static char m_aStr[0xfff];	//表示する文字列
 };
 
 #endif

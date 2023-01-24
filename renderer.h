@@ -42,7 +42,6 @@ private:
 	LPDIRECT3D9 m_pD3D = nullptr;					//Direct3Dオブジェクト
 	LPD3DXFONT m_pFont = nullptr;					//フォント
 	VERTEX_2D m_aVertex[4];							//頂点情報	
-	CCamera *m_pCamera;
 };
 
 #endif

@@ -19,8 +19,8 @@
 //============================================
 // マクロ定義
 //============================================
-#define MESHFIELD_X_BLOCK	(20)		//x方向のブロック
-#define MESHFIELD_Z_BLOCK	(20)		//z方向のブロック
+#define MESHFIELD_X_BLOCK	(80)		//x方向のブロック
+#define MESHFIELD_Z_BLOCK	(80)		//z方向のブロック
 #define MESHFIELD_VERTEX	((MESHFIELD_X_BLOCK + 1) * (MESHFIELD_Z_BLOCK + 1))								//頂点数 ((xブロック数 + 1) * (zブロック数 + 1))
 #define MESHFIELD_INDEX		((MESHFIELD_X_BLOCK + 1) * 2 * MESHFIELD_Z_BLOCK + (MESHFIELD_Z_BLOCK - 1) * 2)	//インデックス数 ((xブロック数 + 1) * 2 * zブロック数 + (zブロック数 - 1) * 縮退ポリゴン用頂点数(z方向に増えたら2ずつ縮退ポリゴン用頂点数が増える))
 #define MESHFIELD_PRIMITIVE	(MESHFIELD_X_BLOCK * (MESHFIELD_Z_BLOCK * 2) + (MESHFIELD_Z_BLOCK - 1) * 4)		//ポリゴン数 (xブロック数 * zブロック数 * 2 + (zブロック数 - 1) * 縮退ポリゴン数(z方向に増えたら4ずつ縮退ポリゴン数が増える))

@@ -8,6 +8,7 @@
 //============================================
 // インクルード
 //============================================
+#include <math.h>
 #include <assert.h>
 #include "camera.h"
 #include "application.h"
@@ -17,6 +18,7 @@
 #include "input.h"
 #include "application.h"
 #include "player.h"
+#include "debug.h"
 
 //============================================
 // 静的メンバ変数宣言
@@ -46,15 +48,23 @@ CCamera::~CCamera()
 //============================================
 HRESULT CCamera::Init(void)
 {
-	m_PosV = D3DXVECTOR3(0.0f, 200.0f, -250.0f);
+	//============================================
+	//メンバ変数の初期化
+	//============================================
+	m_Rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_PosV = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_PosR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	m_OffsetV = D3DXVECTOR3(0.0f,75.0f,150.0f);
+	m_OffsetR = D3DXVECTOR3(0.0f, 0.0f, -150.0f);
+
+	m_PosVDest = D3DXVECTOR3(0.0f, 100.0f, -150.0f);
+	m_PosRDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_VecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);	//<-固定で良い
 
-	//カメラの向き
-	m_Rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
 	//三平方の定理(sqrtfはルートの役割)
-	m_fDistance = sqrtf(((m_PosR.x - m_PosV.x) * (m_PosR.x - m_PosV.x)) + ((m_PosR.z - m_PosV.z) * (m_PosR.z - m_PosV.z)));
+	m_fDistance = sqrtf(((m_PosRDest.x - m_PosVDest.x) * (m_PosRDest.x - m_PosVDest.x)) + ((m_PosRDest.z - m_PosVDest.z) * (m_PosRDest.z - m_PosVDest.z)));
 
 	return S_OK;
 }
@@ -72,106 +82,69 @@ void CCamera::Uninit(void)
 //============================================
 void CCamera::Update()
 {
+	//GetDeviveの取得
+	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
+
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
-	//============================================
-	// 注視点の旋回
-	//============================================
-	if (pInput->GetKeyboardPress(DIK_Q) == true)
-	{//Qキーが押された
-		m_Rot.y -= 0.005f * D3DX_PI;		//右の回転量
-		m_PosR.x = m_PosV.x + sinf(m_Rot.y) * m_fDistance;		//注視点と視点のxの長さ
-		m_PosR.z = m_PosV.z + cosf(m_Rot.y) * m_fDistance;		//注視点と視点のzの長さ
-	}
-	if (pInput->GetKeyboardPress(DIK_E) == true)
-	{//Eキーが押された
-
-		m_Rot.y += 0.005f * D3DX_PI;		//左の回転量
-		m_PosR.x = m_PosV.x + sinf(m_Rot.y) * m_fDistance;		//注視点と視点のxの長さ
-		m_PosR.z = m_PosV.z + cosf(m_Rot.y) * m_fDistance;		//注視点と視点のzの長さ
-	}
-	//============================================
-	// 視点の旋回
-	//============================================
-	if (pInput->GetKeyboardPress(DIK_T) == true)
-	{//Tキーが押された
-		m_Rot.y -= 0.005f * D3DX_PI;		//右の回転量
-		m_PosV.x = m_PosR.x - sinf(m_Rot.y) * m_fDistance;		//視点と注視点のxの長さ
-		m_PosV.z = m_PosR.z - cosf(m_Rot.y) * m_fDistance;		//視点と注視点のzの長さ
-	}
-	if (pInput->GetKeyboardPress(DIK_U) == true)
-	{//Uキーが押された
-		m_Rot.y += 0.005f * D3DX_PI;		//左の回転量
-		m_PosV.x = m_PosR.x - sinf(m_Rot.y) * m_fDistance;		//視点と注視点のxの長さ
-		m_PosV.z = m_PosR.z - cosf(m_Rot.y) * m_fDistance;		//視点と注視点のzの長さ
-	}
-	//============================================
-	// カメラの移動
-	//============================================
-	//前移動
-	if (pInput->GetKeyboardPress(DIK_Y) == true)
-	{//Yキーが押された
-		m_PosV.x += sinf(m_Rot.y) * CAMERA_SPEED;
-		m_PosV.z += cosf(m_Rot.y) * CAMERA_SPEED;
-		m_PosR.x = m_PosV.x + sinf(m_Rot.y) * m_fDistance;		//視点と注視点のxの長さ
-		m_PosR.z = m_PosV.z + cosf(m_Rot.y) * m_fDistance;		//視点と注視点のzの長さ
-	}
-	//後ろ移動
-	if (pInput->GetKeyboardPress(DIK_H) == true)
-	{//Hキーが押された
-		m_PosV.x -= sinf(m_Rot.y) * CAMERA_SPEED;
-		m_PosV.z -= cosf(m_Rot.y) * CAMERA_SPEED;
-		m_PosR.x = m_PosV.x + sinf(m_Rot.y) * m_fDistance;		 //視点と注視点のxの長さ
-		m_PosR.z = m_PosV.z + cosf(m_Rot.y) * m_fDistance;		 //視点と注視点のzの長さ
-	}
-	//左移動
-	if (pInput->GetKeyboardPress(DIK_G) == true)
-	{//Gキーが押された
-		m_PosV.x -= sinf(m_Rot.y + D3DX_PI / 2) * CAMERA_SPEED;
-		m_PosV.z += cosf(m_Rot.y + D3DX_PI / 2) * CAMERA_SPEED;
-		m_PosR.x = m_PosV.x + sinf(m_Rot.y) * m_fDistance;		//視点と注視点のxの長さ
-		m_PosR.z = m_PosV.z + cosf(m_Rot.y) * m_fDistance;		//視点と注視点のzの長さ
-	}
-	//右移動
-	if (pInput->GetKeyboardPress(DIK_J) == true)
-	{//Jキーが押された
-		m_PosV.x -= sinf(m_Rot.y - D3DX_PI / 2) * CAMERA_SPEED;
-		m_PosV.z += cosf(m_Rot.y - D3DX_PI / 2) * CAMERA_SPEED;
-		m_PosR.x = m_PosV.x + sinf(m_Rot.y) * m_fDistance;		//視点と注視点のxの長さ
-		m_PosR.z = m_PosV.z + cosf(m_Rot.y) * m_fDistance;		//視点と注視点のzの長さ
-	}
-	//============================================
-	// 角度の正規化
-	//============================================
-	if (m_Rot.y < -D3DX_PI)				//角度が-180度より小さくなったら
-	{
-		m_Rot.y = D3DX_PI;				//角度に180度を代入する
-	}
-	else if (m_Rot.y > D3DX_PI)			//角度が180度より大きくなったら
-	{
-		m_Rot.y = -D3DX_PI;				//角度に-180度を代入する
-	}
+	D3DXVECTOR3 PlayerRot = CPlayer::GetPlayerRot();	//プレイヤーの向きの取得
+	D3DXVECTOR3 PlayerPos = CPlayer::GetPlayerPos();	//プレイヤーの位置の取得
 
 	//============================================
 	// カメラの追従処理
 	//============================================
-	//D3DXVECTOR3 PlayerPos = CPlayer::GetPlayerPos();
 	//目的の注視点の設定
-	//m_PosRDest.x = (float)PlayerPos.x + sinf(m_Rot.y) * 40.0f;
-	//m_PosRDest.y = 0.0f;
-	//m_PosRDest.z = (float)PlayerPos.z + cosf(m_Rot.y) * 0.0f;
-
-	//目的の視点の設定												
-	//m_PosVDest.x = (float)PlayerPos.x - sinf(m_Rot.y) * 40.0f;
-	//m_PosVDest.y = 0.0f;
-	//m_PosVDest.z = (float)PlayerPos.z - cosf(m_Rot.y) * 80.0f;
+	m_PosDest = PlayerPos;
 
 	//視点の減衰処理
-	//m_PosR.x += (m_PosRDest.x - m_PosR.x) * 1.0f;
-	//m_PosR.z += (m_PosRDest.z - m_PosR.z) * 1.0f;
+	m_pos.x += (m_PosDest.x - m_pos.x) * 1.0f;
+	m_pos.y += (m_PosDest.y - m_pos.y) * 1.0f;
+	m_pos.z += (m_PosDest.z - m_pos.z) * 1.0f;
 
-	//m_PosV.x += (m_PosVDest.x - m_PosV.x) * 1.0f;
-	//m_PosV.z += (m_PosVDest.z - m_PosV.z) * 1.0f;
+	//============================================
+	// カメラの回転処理
+	//============================================
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans;
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);													//行列初期化関数(第一引数の行列を単位行列に初期化)
+
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, PlayerRot.y, PlayerRot.x, PlayerRot.z);		//行列回転関数(第一引数にヨー(y)ピッチ(x)ロール(z)方向の回転行列を作成)
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);								//行列掛け算関数(第2引数 * 第三引数を第一引数に格納)
+
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);						//行列移動関数(第一引数にx,y,z方向の移動行列を作成)
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
+
+	//ベクトル変換
+	D3DXVec3TransformCoord(&m_PosVDest, &m_OffsetV, &m_mtxWorld);
+	D3DXVec3TransformCoord(&m_PosRDest, &m_OffsetR, &m_mtxWorld);
+
+	//============================================
+	// エイムした時の視点減衰
+	//============================================
+	//視点の減衰
+	m_PosV.x += (m_PosVDest.x - m_PosV.x) * 0.1f;
+	m_PosV.y += (m_PosVDest.y - m_PosV.y) * 0.1f;
+	m_PosV.z += (m_PosVDest.z - m_PosV.z) * 0.1f;
+					
+	//注視点の減衰
+	m_PosR.x += (m_PosRDest.x - m_PosR.x) * 0.1f;
+	m_PosR.y += (m_PosRDest.y - m_PosR.y) * 0.1f;
+	m_PosR.z += (m_PosRDest.z - m_PosR.z) * 0.1f;
+
+	//============================================
+	// カメラの向いてる方向に移動できる処理
+	//============================================
+	m_Rot.y = atan2(m_PosR.x - m_PosV.x,m_PosR.z - m_PosV.z);
+	
+	//============================================
+	// デバック表示
+	//============================================
+	CDebugProc::Print("カメラの視点 : %.3f,%.3f,%.3f\n", m_PosVDest.x, m_PosVDest.y, m_PosVDest.z);
+	CDebugProc::Print("カメラの注視点 : %.3f,%.3f,%.3f\n", m_PosRDest.x, m_PosRDest.y, m_PosRDest.z);
 }
 
 //============================================
@@ -206,4 +179,13 @@ void CCamera::SetCamera()
 
 	//プロジェクションマトリックスの設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);
+}
+
+//============================================
+// 距離の設定
+//============================================
+void CCamera::SetOffset(D3DXVECTOR3 posV, D3DXVECTOR3 posR)
+{
+	m_OffsetV = posV;
+	m_OffsetR = posR;
 }

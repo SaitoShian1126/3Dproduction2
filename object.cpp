@@ -265,10 +265,6 @@ void CObject::ModeRelease()
 					//I—¹ˆ—‚ÌŠÖ”ŒÄ‚Ño‚µ
 					pObject->Release();
 				}
-				else
-				{
-					int a = 0;
-				}
 
 				//pObject‚ÉpObject‚ÌpNext‚ð‘ã“ü
 				pObject = pObjectNext;

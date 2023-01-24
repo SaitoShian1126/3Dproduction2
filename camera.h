@@ -35,21 +35,34 @@ public:
 	void Update(void);		//カメラの更新処理
 
 	void SetCamera();		//カメラの設定処理
+	void SetRot(D3DXVECTOR3 rot) { m_Rot = rot; }
+	void SetDistance(float distance) { m_fDistance = distance; }
+	void SetOffset(D3DXVECTOR3 posV, D3DXVECTOR3 posR);
+
+	D3DXVECTOR3 GetPosV() { return m_PosVDest; }
+	D3DXVECTOR3 GetPosR() { return m_PosRDest; }
+	D3DXVECTOR3 GetVecU() { return m_VecU; }
+	float GetDistance() { return m_fDistance; }
 
 	static D3DXVECTOR3 GetCameraRot() { return m_Rot; }		//カメラの回転の取得処理	
 
 private:
 	static D3DXVECTOR3 m_Rot;		//向き
-	D3DXVECTOR3 m_PosV;				//視点
-	D3DXVECTOR3 m_PosVDest;			//目的の視点
-	D3DXVECTOR3 m_PosR;				//注視点
-	D3DXVECTOR3 m_PosRDest;			//目的の注視点
+	D3DXVECTOR3 m_pos;				//位置
+	D3DXVECTOR3 m_PosVDest;			//視点
+	D3DXVECTOR3 m_PosDest;			//目的の視点
+	D3DXVECTOR3 m_PosRDest;			//注視点
 	D3DXVECTOR3 m_VecU;				//上方向ベクトル
+	D3DXVECTOR3 m_OffsetV;			//視点の距離
+	D3DXVECTOR3 m_OffsetR;			//注視点の距離
+	D3DXVECTOR3 m_PosV;				//目的の視点
+	D3DXVECTOR3 m_PosR;				//目的の注視点
 	D3DVIEWPORT9 m_Viewport;		//ビューポート
 	D3DXMATRIX m_mtxProjection;		//プロジェクションマトリックス
 	D3DXMATRIX m_mtxView;			//ビューマトリックス
+	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
 
-	float m_fDistance;				//視点から注視点の距離			
+	float m_fDistance;				//視点から注視点の距離		
 };
 
 #endif

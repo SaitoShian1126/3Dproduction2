@@ -1,0 +1,204 @@
+#==============================================================================
+#
+# 『model』スクリプトファイル [model.txt]
+# Author : SHIAN SAITO
+#
+#==============================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/XMODEL/pillar.x				# [0]柱
+MODEL_FILENAME = data/XMODEL/pillar.x				# [1]柱
+MODEL_FILENAME = data/XMODEL/pillar_side.x			# [2]柱(横)
+MODEL_FILENAME = data/XMODEL/roof.x					# [3]屋根
+MODEL_FILENAME = data/XMODEL/helicopter.x			# [4]ヘリコプター
+MODEL_FILENAME = data/XMODEL/apartment_01.x			# [5]アパート_01
+MODEL_FILENAME = data/XMODEL/apartment_02.x			# [6]アパート_02
+MODEL_FILENAME = data/XMODEL/tank.x					# [7]戦車
+MODEL_FILENAME = data/XMODEL/house_01.x				# [8]家
+MODEL_FILENAME = data/XMODEL/house_01.x				# [9]家
+MODEL_FILENAME = data/XMODEL/house_Parts.x			# [10]玄関
+MODEL_FILENAME = data/XMODEL/house_Parts.x			# [11]玄関
+MODEL_FILENAME = data/XMODEL/car.x					# [12]車
+MODEL_FILENAME = data/XMODEL/car.x					# [13]車
+MODEL_FILENAME = data/XMODEL/car.x					# [14]車
+MODEL_FILENAME = data/XMODEL/decoration.x			# [15]飾り
+MODEL_FILENAME = data/XMODEL/gasstations_01.x		# [16]ガソリンスタンド(建物)
+MODEL_FILENAME = data/XMODEL/gasstations_02.x		# [17]ガソリンスタンド(屋根)
+MODEL_FILENAME = data/XMODEL/gasstations_03.x		# [18]ガソリンスタンド(柱)
+MODEL_FILENAME = data/XMODEL/gasstations_03.x		# [19]ガソリンスタンド(柱)
+MODEL_FILENAME = data/XMODEL/gasstations_03.x		# [20]ガソリンスタンド(柱)
+MODEL_FILENAME = data/XMODEL/gasstations_03.x		# [21]ガソリンスタンド(柱)
+MODEL_FILENAME = data/XMODEL/gasstations_04.x		# [22]ガソリンスタンド(給油所)
+
+#------------------------------------------------------------------------------
+# モデル配置情報
+#------------------------------------------------------------------------------
+#----------------------------
+# ゴール
+#----------------------------
+MODELSET
+	NUM_MODEL = 23
+	
+	MODELSET
+		TYPE = 0
+		POS = -145 0 50
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 1
+		POS = 0 0 50
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 2
+		POS = -75 0 100
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 3
+		POS = -75 68 60
+		ROT = 0 0 0
+	END_MODELSET
+	
+#----------------------------
+# ヘリコプター
+#----------------------------
+	MODELSET
+		TYPE = 4
+		POS = 420 0 -100
+		ROT = 0 0 45
+	END_MODELSET
+	
+#----------------------------
+# アパート
+#----------------------------
+	MODELSET
+		TYPE = 5
+		POS = -80 0 -180
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 6
+		POS = -80 0 -290
+		ROT = 0 0 0
+	END_MODELSET
+	
+#----------------------------
+# 戦車
+#----------------------------
+	MODELSET
+		TYPE = 7
+		POS = -31 0 -776
+		ROT = 0 0 0
+	END_MODELSET
+	
+#----------------------------
+# 家
+#----------------------------
+	MODELSET
+		TYPE = 8
+		POS = 171 0 -171
+		ROT = 0 0 0
+	END_MODELSET
+	
+	
+	MODELSET
+		TYPE = 9
+		POS = 400 0 50
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 10
+		POS = 115 0 -230
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 11
+		POS = 345 0 -15
+		ROT = 0 0 0
+	END_MODELSET
+	
+#----------------------------
+# 車
+#----------------------------
+	MODELSET
+		TYPE = 12
+		POS = 210 0 -680
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 13
+		POS = 155 0 -586
+		ROT = 0 3.14 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 14
+		POS = 150 0 -450
+		ROT = 0 -45 0
+	END_MODELSET
+#----------------------------
+# 飾り
+#----------------------------
+	MODELSET
+		TYPE = 15
+		POS = -120 0 -580
+		ROT = 0 -1.57 0
+	END_MODELSET
+	
+#----------------------------
+# ガソリンスタンド
+#----------------------------
+	MODELSET
+		TYPE = 16
+		POS = 200 0 -530
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 17
+		POS = 170 100 -530
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 18
+		POS = 200 0 -480
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 19
+		POS = 200 0 -580
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 20
+		POS = 100 0 -480
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 21
+		POS = 100 0 -580
+		ROT = 0 0 0
+	END_MODELSET
+	
+	MODELSET
+		TYPE = 22
+		POS = 100 0 -530
+		ROT = 0 0 0
+	END_MODELSET
+
+END_SCRIPT

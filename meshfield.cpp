@@ -51,11 +51,11 @@ CMeshField::~CMeshField()
 HRESULT CMeshField::Init(void)
 {
 	//乱数
-	srand((unsigned int)time(nullptr));	//起動時に一回だけ行うため初期化に書く	
+	srand((unsigned int)time(nullptr));											//起動時に一回だけ行うため初期化に書く	
 	//============================================
 	// メンバ変数の初期化
 	//============================================
-	m_pVtxBuffMeshField = nullptr;											//バッファの初期化
+	m_pVtxBuffMeshField = nullptr;												//バッファの初期化
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//位置の初期化
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//移動の初期化
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//回転の初期化
@@ -67,7 +67,7 @@ HRESULT CMeshField::Init(void)
 	m_fAngle = atan2f(m_fWidth, m_fHeight);										//角度の初期化
 	m_nTimer = 0;																//時間の初期化
 	m_RandFlag = false;															//ランダムフラグをfalse
-	m_fRotMove = 5.0f;																//向きのクリア
+	m_fRotMove = 5.0f;															//向きのクリア
 
 	//GetDeviveの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
@@ -231,6 +231,7 @@ void CMeshField::Uninit(void)
 //============================================
 void CMeshField::Update(void)
 {
+
 }
 //============================================
 // オブジェクト(ポリゴン)の描画処理

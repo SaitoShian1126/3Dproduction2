@@ -19,7 +19,7 @@
 // 静的メンバ変数宣言
 //============================================
 LPDIRECT3DTEXTURE9 CResult::m_pTextureResult[2] = {};
-CResult::TYPE CResult::m_type = TYPE_NONE;
+CResult::TYPE CResult::m_TypeNumber = TYPE_NONE;
 
 //============================================
 // リザルトのコンストラクタ
@@ -64,7 +64,7 @@ HRESULT CResult::Init(void)
 	m_pObject = CObject2D::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 	m_pObject->SetSize(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 
-	switch (m_type)
+	switch (m_TypeNumber)
 	{
 	case CResult::TYPE_GAMEOVER:
 		m_pObject->BindTexture(m_pTextureResult[0]);
@@ -114,12 +114,12 @@ void CResult::Draw()
 //============================================
 void CResult::SetType(TYPE type)
 {
-	m_type = type;
+	m_TypeNumber = type;
 }
 //============================================
 // リザルトの生成
 //============================================
-CResult *CResult::Create(TYPE type)
+CResult *CResult::Create()
 {
 	CResult *pResult = nullptr;
 
@@ -129,7 +129,6 @@ CResult *CResult::Create(TYPE type)
 	//nullチェック
 	if (pResult != nullptr)
 	{
-		pResult->SetType(type);
 		//初期化処理
 		pResult->Init();
 	}
