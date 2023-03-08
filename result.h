@@ -53,9 +53,11 @@ public:
 
 private:
 	static LPDIRECT3DTEXTURE9 m_pTextureResult[2];	//テクスチャへのポインタ
-	static TYPE m_TypeNumber;								//リザルトの種類
+	static TYPE m_TypeNumber;						//リザルトの種類
 	CObject2D *m_pObject;							//オブジェクトのポインタ
 	CFade *m_pFade;									//フェード
+
+	bool m_BGMFlag;							//BGMフラグ
 };
 
 #endif

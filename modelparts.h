@@ -51,17 +51,18 @@ public:
 	static CModelParts *Create(const D3DXVECTOR3 pos, const D3DXVECTOR3 rot);			//生成
 
 private:
-	LPD3DXBUFFER m_pBuffMat;	//バッファ
-	LPD3DXMESH m_pMesh;			//メッシュ
-	D3DXVECTOR3 m_pos;			//位置
-	D3DXVECTOR3 m_rot;			//向き
-	D3DXVECTOR3 m_VtxMinModel;	//最小
-	D3DXVECTOR3 m_VtxMaxModel;	//最大
-	D3DXMATRIX m_mtxWorld;		//ワールドマトリックス
-	D3DXMATRIX *m_pmtxParent;	//親のマトリックス
-	DWORD m_pNumMat;			//マテリアル
+	LPDIRECT3DTEXTURE9 *m_pTexture;					//テクスチャへのポインタ
+	LPD3DXBUFFER m_pBuffMat;						//バッファ
+	LPD3DXMESH m_pMesh;								//メッシュ
+	D3DXVECTOR3 m_pos;								//位置
+	D3DXVECTOR3 m_rot;								//向き
+	D3DXVECTOR3 m_VtxMinModel;						//最小
+	D3DXVECTOR3 m_VtxMaxModel;						//最大
+	D3DXMATRIX m_mtxWorld;							//ワールドマトリックス
+	D3DXMATRIX *m_pmtxParent;						//親のマトリックス
+	DWORD m_pNumMat;								//マテリアル
 
-	int nIdxModelParent;		//親モデルのインデックス
+	int nIdxModelParent;							//親モデルのインデックス
 	bool m_LineUseFlag;								//ラインが使用されたか
 };
 

@@ -37,7 +37,7 @@ public:
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuffShadow;			//頂点バッファへのポインタ
 	LPDIRECT3DTEXTURE9 m_pTextureShadow;				//頂点バッファへのポインタ
-	static D3DXVECTOR3 m_pos;									//位置
+	D3DXVECTOR3 m_pos;									//位置
 
 	bool m_Texture;
 };

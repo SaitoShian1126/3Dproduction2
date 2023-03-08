@@ -174,6 +174,45 @@
     <ClCompile Include="spawn.cpp">
       <Filter>ソース ファイル\CHARACTER</Filter>
     </ClCompile>
+    <ClCompile Include="rock_gimmick.cpp">
+      <Filter>ソース ファイル\GIMMICK</Filter>
+    </ClCompile>
+    <ClCompile Include="sound.cpp">
+      <Filter>ソース ファイル\OTHER</Filter>
+    </ClCompile>
+    <ClCompile Include="skybox.cpp">
+      <Filter>ソース ファイル\MAP</Filter>
+    </ClCompile>
+    <ClCompile Include="wall.cpp">
+      <Filter>ソース ファイル\MAP</Filter>
+    </ClCompile>
+    <ClCompile Include="hp.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="fire.cpp">
+      <Filter>ソース ファイル\BILLBOARD</Filter>
+    </ClCompile>
+    <ClCompile Include="indication.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>ソース ファイル\BILLBOARD</Filter>
+    </ClCompile>
+    <ClCompile Include="ui.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="enter.cpp">
+      <Filter>ソース ファイル\MODE</Filter>
+    </ClCompile>
+    <ClCompile Include="tutorial.cpp">
+      <Filter>ソース ファイル\MODE</Filter>
+    </ClCompile>
+    <ClCompile Include="reticle.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="warning.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="title.h">
@@ -293,5 +332,47 @@
     <ClInclude Include="spawn.h">
       <Filter>ソース ファイル\CHARACTER</Filter>
     </ClInclude>
+    <ClInclude Include="rock_gimmick.h">
+      <Filter>ソース ファイル\GIMMICK</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>ソース ファイル\OTHER</Filter>
+    </ClInclude>
+    <ClInclude Include="skybox.h">
+      <Filter>ソース ファイル\MAP</Filter>
+    </ClInclude>
+    <ClInclude Include="wall.h">
+      <Filter>ソース ファイル\MAP</Filter>
+    </ClInclude>
+    <ClInclude Include="hp.h">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="fire.h">
+      <Filter>ソース ファイル\BILLBOARD</Filter>
+    </ClInclude>
+    <ClInclude Include="indication.h">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
+      <Filter>ソース ファイル\BILLBOARD</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="enter.h">
+      <Filter>ソース ファイル\MODE</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial.h">
+      <Filter>ソース ファイル\MODE</Filter>
+    </ClInclude>
+    <ClInclude Include="reticle.h">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="warning.h">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

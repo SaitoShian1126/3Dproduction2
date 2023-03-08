@@ -161,11 +161,14 @@ CJoyPad::~CJoyPad(void)
 //============================================
 HRESULT CJoyPad::Init(HINSTANCE hInstance, HWND hWnd)
 {
-	//Xinputのステート設定(有効にする)
+	//XInputのステートを設定（有効にする）
 	XInputEnable(true);
+
 	//メモリーのクリア
 	memset(&m_JoykeyState, 0, sizeof(XINPUT_STATE));
 	memset(&m_JoykeyStateTrigger, 0, sizeof(XINPUT_STATE));
+
+	m_bUseJoypad = false;
 
 	return S_OK;
 }
@@ -175,7 +178,7 @@ HRESULT CJoyPad::Init(HINSTANCE hInstance, HWND hWnd)
 //============================================
 void CJoyPad::Uninit(void)
 {
-	//Xinputのステートを設定(無効にする)
+	//XInputのステートを設定（無効にする）
 	XInputEnable(false);
 }
 
@@ -186,13 +189,54 @@ void CJoyPad::Update(void)
 {
 	XINPUT_STATE joykeyState;	//ジョイパッドの入力処理
 
-	//ジョイパッドの状態の取得
-	if (XInputGetState(0, &joykeyState) == ERROR_SUCCESS)		//0番目のジョイパッド
+	// ジョイパッドの状態を取得
+	if (XInputGetState(0, &joykeyState) == ERROR_SUCCESS)
 	{
-		m_aJoykeyStateTrigger = ~m_JoykeyState.Gamepad.wButtons & joykeyState.Gamepad.wButtons;
-		m_aJoykeyStateRelese = m_JoykeyState.Gamepad.wButtons & ~joykeyState.Gamepad.wButtons;
-		m_JoykeyState = joykeyState;	//ジョイパッドのプレス情報を保存
+		m_JoykeyStateTrigger.Gamepad.wButtons = ~m_JoykeyState.Gamepad.wButtons& joykeyState.Gamepad.wButtons; // トリガー情報を保存
+		m_JoykeyState = joykeyState;  // プレス処理
+		m_bUseJoypad = true;
 	}
+	else
+	{
+		m_bUseJoypad = false;
+	}
+}
+
+//============================================
+//	ジョイパット(スティックプレス処理
+//============================================
+D3DXVECTOR3 CJoyPad::GetJoypadStick(JOYKEY Key)
+{
+	switch (Key)
+	{
+	case JOYKEY_LEFT_STICK:
+		m_JoyStickPos = D3DXVECTOR3(m_JoykeyState.Gamepad.sThumbLX / 32767.0f, -m_JoykeyState.Gamepad.sThumbLY / 32767.0f, 0.0f);
+		break;
+	case JOYKEY_RIGHT_STICK:
+		m_JoyStickPos = D3DXVECTOR3(m_JoykeyState.Gamepad.sThumbRX / 32767.0f, -m_JoykeyState.Gamepad.sThumbRY / 32767.0f, 0.0f);
+		break;
+	}
+
+	return m_JoyStickPos;
+}
+
+//============================================
+//	ジョイパットトリガーペダル処理
+//============================================
+int CJoyPad::GetJoypadTriggerPedal(JOYKEY Key)
+{
+	int nJoypadTriggerPedal = 0;
+	switch (Key)
+	{
+	case JOYKEY_LEFT_TRIGGER:
+		nJoypadTriggerPedal = m_JoykeyState.Gamepad.bLeftTrigger;
+		break;
+	case JOYKEY_RIGHT_TRIGGER:
+		nJoypadTriggerPedal = m_JoykeyState.Gamepad.bRightTrigger;
+		break;
+	}
+
+	return nJoypadTriggerPedal;
 }
 
 //============================================
@@ -202,10 +246,19 @@ bool CJoyPad::GetJoypadPress(JOYKEY key)
 {
 	return (m_JoykeyState.Gamepad.wButtons & (0x01 << key)) ? true : false;
 }
+
 //============================================
 // ジョイパッドトリガーの取得処理
 //============================================
 bool CJoyPad::GetJoypadTrigger(JOYKEY key)
 {
-	return(m_aJoykeyStateTrigger & (0x01 << key)) ? true : false;
+	return (m_JoykeyStateTrigger.Gamepad.wButtons & (0x01 << key)) ? true : false;
+}
+
+//============================================
+// ジョイパッドの使用状況を取得
+//============================================
+bool * CJoyPad::GetUseJoypad(void)
+{
+	return &m_bUseJoypad;
 }

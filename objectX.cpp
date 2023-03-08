@@ -47,7 +47,7 @@ HRESULT CObjectX::Init(void)
 
 	//ƒ‚ƒfƒ‹‚ÌŽg—p‚ðfalse‚É‚·‚é
 	m_Model = false;
-	SetModel("data/XMODEL/gasolene.x");
+	//SetModel("data/XMODEL/car.x");
 	
 	return S_OK;
 }

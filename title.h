@@ -33,6 +33,14 @@ class CFade;
 class CTitle : public CMode
 {
 public:
+	enum TYPE
+	{
+		TYPE_NONE = 0,
+		TYPE_IN,
+		TYPE_OUT,
+		TYPE_MAX
+	};
+
 	CTitle();				//コンストラクタ
 	~CTitle() ;				//デストラクタ
 
@@ -48,6 +56,9 @@ private:
 	LPDIRECT3DTEXTURE9 m_pTextureTitle;		//テクスチャへのポインタ
 	CObject2D *m_pObject;					//オブジェクトのポインタ
 	CFade *m_pFade;							//フェード
+
+	bool m_BGMFlag;							//BGMフラグ
+	bool m_flag;							//フラグ
 };
 
 #endif

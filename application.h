@@ -23,6 +23,7 @@ class CMode;
 class CCamera;
 class CLight;
 class CInput;
+class CJoyPad;
 class CDebugProc;
 
 //============================================
@@ -38,6 +39,7 @@ public:
 	{
 		MODE_NONE = 0,	
 		MODE_TITLE,		//タイトル
+		MODE_TUTORIAL,	//チュートリアル
 		MODE_GAME,		//ゲーム
 		MODE_RESULT,	//リザルト
 		MODE_RANKING,	//ランキング
@@ -57,6 +59,7 @@ public:
 	static MODE GetModeType() { return m_mode; }						//モード種類の取得処理
 	static CCamera *GetCamera(void) { return m_pCamera; }				//カメラの情報の取得処理
 	static CInput *GetInput(void) { return m_pInput; }					//キーボードの取得処理
+	static CJoyPad *GetJpyPad(void) { return m_pJoyPad; }				//ジョイパッドの取得処理
 	
 private:
 	static CRenderer *m_pRenderer;			//レンダリングのポインタ
@@ -65,6 +68,7 @@ private:
 	static CCamera *m_pCamera;				//カメラのポインタ
 	static CLight *m_pLight;				//ライトのポインタ
 	static CInput *m_pInput;				//インプットのポインタ
+	static CJoyPad *m_pJoyPad;				//ジョイパッドのポインタ
 	static CDebugProc *m_pDebug;			//デバッグ表示のポインタ	
 };
 

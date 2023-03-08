@@ -26,14 +26,19 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="enter.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="fire.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gasolene_gimmick.cpp" />
     <ClCompile Include="gimmick.cpp" />
+    <ClCompile Include="indication.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="key.cpp" />
     <ClCompile Include="keyset.cpp" />
+    <ClCompile Include="hp.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="main.cpp" />
@@ -53,11 +58,19 @@
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
+    <ClCompile Include="reticle.cpp" />
+    <ClCompile Include="rock_gimmick.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="shadow.cpp" />
+    <ClCompile Include="skybox.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="spawn.cpp" />
     <ClCompile Include="sphere.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="ui.cpp" />
+    <ClCompile Include="wall.cpp" />
+    <ClCompile Include="warning.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -67,14 +80,19 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="enter.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="fire.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gasolene_gimmick.h" />
     <ClInclude Include="gimmick.h" />
+    <ClInclude Include="indication.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="key.h" />
     <ClInclude Include="keyset.h" />
+    <ClInclude Include="hp.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="line.h" />
     <ClInclude Include="main.h" />
@@ -94,11 +112,22 @@
     <ClInclude Include="ranking.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="reticle.h" />
+    <ClInclude Include="rock_gimmick.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="shadow.h" />
+    <ClInclude Include="skybox.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="spawn.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="tutorial.h" />
+    <ClInclude Include="ui.h" />
+    <ClInclude Include="wall.h" />
+    <ClInclude Include="warning.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C930F2E1-92E3-4DA1-9EAF-940B2EFF2796}</ProjectGuid>

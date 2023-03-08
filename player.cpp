@@ -29,6 +29,11 @@
 #include "model.h"
 #include "line.h"
 #include "enemy.h"
+#include "particle.h"
+#include "sound.h"
+#include "ui.h"
+#include "item.h"
+#include "reticle.h"
 
 //============================================
 // 静的メンバ変数宣言
@@ -39,19 +44,47 @@ bool CPlayer::m_PlayerAttackFlag = false;
 CBullet *CPlayer::m_pBullet = nullptr;
 
 //============================================
-// オブジェクトのコンストラクタ
+// プレイヤーのコンストラクタ
 //============================================
 CPlayer::CPlayer()
 {
 	//============================================
 	// メンバ変数のクリア
 	//============================================
-	m_nCountModel = 0;
-	m_Frame = 0;
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						//位置のクリア
+	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						//向きのクリア
+	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						//サイズのクリア
+	m_rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					//目的の向きのクリア
+	m_ADSRotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				//エイム中の目的の向きのクリア処理
+	m_VtxMinModel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				//最小のクリア
+	m_VtxMaxModel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				//最大のクリア
+	m_nCountModel = 0;											//モデルカウントのクリア
+	m_Frame = 0;												//フレーム数のクリア
+	m_PresentKeySet = 0;										//前回のキーセットのクリア
+	m_Life = 0;													//体力のクリア
+	m_BulletCreateTime = 0;										//弾を生成するまでの時間
+	m_ThrowTime = 0;											//投げるモーションが終わるまでの時間
+	m_BombUseCount = 0;											//爆弾を何回使用したのかのクリア
+	m_AnimationFlag = false;									//アニメーションのフラグのクリア
+	m_AttackAnimationFlag = false;								//攻撃アニメーションのクリア
+	m_SoundRunFlag = false;										//走っているサウンドのクリア	
+	m_SoundAttackFlag = false;									//攻撃サウンドのクリア
+	m_BulletCreateFlag = false;									//弾が生成されたかのフラグ
+	m_ThrowFlag = false;										//投げるモーションを下のかのフラグのクリア
+	m_BombUseCountFlag = false;									//爆弾を何回使用したのかフラグのクリア
+	m_DashFlag = false;											//走っているのかのフラグの初期化
+	m_DashAnimationFlag = false;								//走っているときのモーションフラグのクリア
+	m_MotionType = MOTIONTYPE_NEUTRALMOTION;					//モーションの種類をニュートラルモーションにクリア
+	for (int nCnt = 0; nCnt < MODEL_NUMBER; nCnt++)
+	{
+		m_apModel[nCnt] = nullptr;								//モデル数のクリア
+		m_FrameSpeed[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//フレームスピードのクリア
+		m_RotSpeed[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//回転スピードのクリア
+	}
 }
 
 //============================================
-// オブジェクトのデストラクタ
+// プレイヤーのデストラクタ
 //============================================
 CPlayer::~CPlayer()
 {
@@ -59,22 +92,36 @@ CPlayer::~CPlayer()
 }
 
 //============================================
-// オブジェクト(ポリゴン)の初期化処理
+// プレイヤーの初期化処理
 //============================================
 HRESULT CPlayer::Init(void)
 {
-	// ============================================
+	//============================================
 	// メンバ変数の初期化
-	// ============================================
+	//============================================
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						//位置の初期化
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						//向きの初期化
 	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						//サイズの初期化
 	m_rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					//目的の向きの初期化
+	m_ADSRotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				//エイム中の目的の向きの初期化処理
 	m_VtxMinModel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				//最小の初期化
 	m_VtxMaxModel = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				//最大の初期化
 	m_nCountModel = 0;											//モデルカウントの初期化
 	m_Frame = 0;												//フレーム数の初期化
 	m_PresentKeySet = 0;										//前回のキーセットの初期化
+	m_Life = 10;												//体力の初期化
+	m_BulletCreateTime = 0;										//弾を生成するまでの時間
+	m_ThrowTime = 50;											//投げるモーションが終わるまでの時間
+	m_BombUseCount = 3;											//爆弾を何回使用したのかの初期化
+	m_AnimationFlag = false;									//アニメーションのフラグの初期化
+	m_AttackAnimationFlag = false;								//攻撃アニメーションの初期化
+	m_SoundRunFlag = false;										//走っているサウンドの初期化	
+	m_SoundAttackFlag = false;									//攻撃サウンドの初期化
+	m_BulletCreateFlag = false;									//弾が生成されたかのフラグ
+	m_ThrowFlag = false;										//投げるモーションを下のかのフラグの初期化
+	m_BombUseCountFlag = false;									//爆弾を何回使用したのかフラグの初期化
+	m_DashFlag = false;											//走っているのかのフラグの初期化
+	m_DashAnimationFlag = false;								//走っているときのモーションフラグの初期化
 	m_MotionType = MOTIONTYPE_NEUTRALMOTION;					//モーションの種類をニュートラルモーションに初期化
 	for (int nCnt = 0; nCnt < MODEL_NUMBER; nCnt++)				
 	{
@@ -93,10 +140,13 @@ HRESULT CPlayer::Init(void)
 }
 
 //============================================
-// オブジェクト(ポリゴン)の終了処理
+// プレイヤーの終了処理
 //============================================
 void CPlayer::Uninit(void)
 {
+	//サウンドの停止
+	StopSound();
+
 	//モデルパーツの終了処理
 	for (int nCnt = 0; nCnt < MODEL_NUMBER; nCnt++)
 	{
@@ -107,16 +157,16 @@ void CPlayer::Uninit(void)
 			m_apModel[nCnt] = nullptr;
 		}
 	}
+
+	//破棄処理
+	Release();
 }
 
 //============================================
-// オブジェクト(ポリゴン)の更新処理
+// プレイヤーの更新処理
 //============================================
 void CPlayer::Update(void)
 {
-	//メッシュフィールドの情報
-	CMeshField *pMeshField = CGame::GetMeshField();
-
 	//プレイヤーの移動処理関数
 	PlayerMove();
 
@@ -126,30 +176,16 @@ void CPlayer::Update(void)
 	//モーションの関数呼び出し
 	MotionAnimation();
 
-	//メッシュフィールドとプレイヤーの当たり判定
-	pMeshField->GetMeshFieldCollision(&m_pos);
-
-	for (int nCnt = 0; nCnt < NUMBER_OF_MODELS; nCnt++)
-	{
-		//モデルとの当たり判定
-		CModelParts *pModelParts = CGame::GetModel()->GetModelParts()[nCnt];
-		pModelParts->ModelCollision(&m_pos, &m_posOld, m_size);
-	}
-
-	//for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
-	//{
-	//	//敵との当たり判定
-	//	CEnemy *pEnemy = CGame::GetEnemy(nCnt);
-	//	pEnemy->CollisionEnemy(&m_pos, &m_posOld, m_size);
-	//}
+	//全部のモデルとの当たり判定
+	CollisionMaxModel();
 }
 
 //============================================
-// オブジェクト(ポリゴン)の描画処理
+// プレイヤーの描画処理
 //============================================
 void CPlayer::Draw(void)
 {
-	D3DXMATRIX mtxRot, mtxTrans;		//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans;												//計算用マトリックス
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);											//行列初期化関数(第一引数の行列を単位行列に初期化)
@@ -180,14 +216,13 @@ CPlayer * CPlayer::Create(const D3DXVECTOR3 &pos)
 	CPlayer *pPlayer = nullptr;
 
 	//プレイヤークラスの生成
-	pPlayer = new CPlayer;				// 3Dオブジェクトのインスタンス生成
+	pPlayer = new CPlayer;			//プレイヤーのインスタンス生成
 
-	// nullptrチェック
+	//nullチェック
 	if (pPlayer != nullptr)
 	{
-		// 初期化処理
-		pPlayer->Init();
-		pPlayer->SetPosition(pos);
+		pPlayer->Init();			//初期化処理
+		pPlayer->SetPosition(pos);	//位置の設定
 	}
 	else
 	{
@@ -591,7 +626,7 @@ void CPlayer::MotionAnimation(void)
 
 			m_MotionSet[m_MotionType]->SetLoop(false);		//ループをfalseに設定する	
 			m_MotionType = MOTIONTYPE_NEUTRALMOTION;		//モーションをニュートラルモーションにする
-			NextKeySet = 0;									//次のキーセットの初期化
+			//NextKeySet = 0;								//次のキーセットの初期化
 		}
 
 		for (int nCnt = 0; nCnt < MODEL_NUMBER; nCnt++)
@@ -620,24 +655,31 @@ void CPlayer::PlayerMove(void)
 {
 	// インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
+	CJoyPad *pJoyPad = CApplication::GetJpyPad();
 	D3DXVECTOR3 CameraRot = CCamera::GetCameraRot();
 	D3DXVECTOR3 PlayerRot = GetRot();
 
 	//前回の位置を保存
 	m_posOld = m_pos;
 
-	if (m_PlayerAttackFlag == false)
+	//============================================
+	// 通常視点時の移動
+	//============================================
+	if (m_PlayerAttackFlag == false && m_DashFlag == false)
 	{
 		// 上方向
-		if (pInput->GetKeyboardPress(DIK_W) == true)
+		if (pInput->GetKeyboardPress(DIK_W) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < -0.5f))
 		{// Wキーが押された
-			if (pInput->GetKeyboardPress(DIK_A) == true)
+			if (pInput->GetKeyboardPress(DIK_A) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
 			{
 				m_pos.x -= sinf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_MOVE;	// 移動量
 				m_pos.z -= cosf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_MOVE;	// 移動量
 				m_rotDest.y = (CameraRot.y + D3DX_PI * 0.75f);					// 向く角度
 			}
-			else if (pInput->GetKeyboardPress(DIK_D) == true)
+			else if (pInput->GetKeyboardPress(DIK_D) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
 			{
 				m_pos.x += sinf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_MOVE;	// 移動量
 				m_pos.z += cosf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_MOVE;	// 移動量
@@ -650,19 +692,32 @@ void CPlayer::PlayerMove(void)
 				m_rotDest.y = (CameraRot.y + D3DX_PI);							// 向く角度
 			}
 
-			//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
+			if (m_SoundRunFlag == false)
+			{
+				//サウンドの再生
+				PlaySound(SOUND_LABEL_SE_RUN);
+				m_SoundRunFlag = true;
+			}
 		}
 		// 下方向
-		else if (pInput->GetKeyboardPress(DIK_S) == true)
+		else if (pInput->GetKeyboardPress(DIK_S) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > 0.5f))
 		{// Sキーが押された
-			if (pInput->GetKeyboardPress(DIK_A) == true)
+			if (pInput->GetKeyboardPress(DIK_A) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
 			{
 				m_pos.x -= sinf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_MOVE;	// 移動量
 				m_pos.z -= cosf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_MOVE;	// 移動量
 				m_rotDest.y = (CameraRot.y + D3DX_PI * 0.25f);					// 向く角度
 			}
-			else if (pInput->GetKeyboardPress(DIK_D) == true)
+			else if (pInput->GetKeyboardPress(DIK_D) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
 			{
 				m_pos.x += sinf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_MOVE;	// 移動量
 				m_pos.z += cosf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_MOVE;	// 移動量
@@ -675,46 +730,186 @@ void CPlayer::PlayerMove(void)
 				m_rotDest.y = CameraRot.y;										// 向く角度
 			}
 
-			//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
 		// 左方向
-		else if (pInput->GetKeyboardPress(DIK_A) == true)
+		else if (pInput->GetKeyboardPress(DIK_A) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
 		{// Aキーが押された
 			m_pos.x -= sinf(CameraRot.y + D3DX_PI / 2) * PLAYER_MOVE;			// 移動量
 			m_pos.z -= cosf(CameraRot.y + D3DX_PI / 2) * PLAYER_MOVE;			// 移動量
 			m_rotDest.y = (CameraRot.y + D3DX_PI / 2);							// 向く角度
 
-			//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
 		// 右方向
-		else if (pInput->GetKeyboardPress(DIK_D) == true)
+		else if (pInput->GetKeyboardPress(DIK_D) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
 		{// Dキーが押された
 			m_pos.x += sinf(CameraRot.y + D3DX_PI / 2) * PLAYER_MOVE;			// 移動量
 			m_pos.z += cosf(CameraRot.y + D3DX_PI / 2) * PLAYER_MOVE;			// 移動量
 			m_rotDest.y = (CameraRot.y - D3DX_PI / 2);							// 向く角度
 
-			//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
 	}
+
+	//============================================
+	// 通常視点時の移動(ダッシュ)
+	//============================================
+	if (pJoyPad->GetJoypadTrigger(pJoyPad->JOYKEY_LEFT_THUMB) == true && m_DashFlag == false)
+	{
+		m_DashFlag = true;
+		//移動モーションの設定
+		SetMotionType(CPlayer::MOTIONTYPE_DASH);
+	}
+	else if ((pJoyPad->GetJoypadTrigger(pJoyPad->JOYKEY_LEFT_THUMB) == true) && m_DashFlag == true)
+	{
+		m_DashFlag = false;
+		//移動モーションの設定
+		SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+	}
+	if (m_PlayerAttackFlag == false && m_DashFlag == true)
+	{
+		// 上方向
+		if (pInput->GetKeyboardPress(DIK_W) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < -0.5f))
+		{// Wキーが押された
+			if (pInput->GetKeyboardPress(DIK_A) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
+			{
+				m_pos.x -= sinf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_DASH_MOVE;	// 移動量
+				m_pos.z -= cosf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_DASH_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y + D3DX_PI * 0.75f);					// 向く角度
+			}
+			else if (pInput->GetKeyboardPress(DIK_D) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
+			{
+				m_pos.x += sinf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_DASH_MOVE;	// 移動量
+				m_pos.z += cosf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_DASH_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y - D3DX_PI * 0.75f);					// 向く角度
+			}
+			else
+			{
+				m_pos.x += sinf(CameraRot.y) * PLAYER_DASH_MOVE;						// 移動量
+				m_pos.z += cosf(CameraRot.y) * PLAYER_DASH_MOVE;						// 移動量
+				m_rotDest.y = (CameraRot.y + D3DX_PI);							// 向く角度
+			}
+
+			if (m_DashAnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_DASH);
+				m_DashAnimationFlag = true;
+			}
+			if (m_SoundRunFlag == false)
+			{
+				//サウンドの再生
+				PlaySound(SOUND_LABEL_SE_RUN);
+				m_SoundRunFlag = true;
+			}
+		}
+		// 下方向
+		else if (pInput->GetKeyboardPress(DIK_S) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > 0.5f))
+		{// Sキーが押された
+			if (pInput->GetKeyboardPress(DIK_A) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
+			{
+				m_pos.x -= sinf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_DASH_MOVE;	// 移動量
+				m_pos.z -= cosf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER_DASH_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y + D3DX_PI * 0.25f);					// 向く角度
+			}
+			else if (pInput->GetKeyboardPress(DIK_D) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
+			{
+				m_pos.x += sinf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_DASH_MOVE;	// 移動量
+				m_pos.z += cosf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER_DASH_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y - D3DX_PI * 0.25f);					// 向く角度
+			}
+			else
+			{
+				m_pos.x -= sinf(CameraRot.y) * PLAYER_DASH_MOVE;						// 移動量
+				m_pos.z -= cosf(CameraRot.y) * PLAYER_DASH_MOVE;						// 移動量
+				m_rotDest.y = CameraRot.y;										// 向く角度
+			}
+
+			if (m_DashAnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_DASH);
+				m_DashAnimationFlag = true;
+			}
+		}
+		// 左方向
+		else if (pInput->GetKeyboardPress(DIK_A) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
+		{// Aキーが押された
+			m_pos.x -= sinf(CameraRot.y + D3DX_PI / 2) * PLAYER_DASH_MOVE;			// 移動量
+			m_pos.z -= cosf(CameraRot.y + D3DX_PI / 2) * PLAYER_DASH_MOVE;			// 移動量
+			m_rotDest.y = (CameraRot.y + D3DX_PI / 2);							// 向く角度
+
+			if (m_DashAnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_DASH);
+				m_DashAnimationFlag = true;
+			}
+		}
+		// 右方向
+		else if (pInput->GetKeyboardPress(DIK_D) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
+		{// Dキーが押された
+			m_pos.x += sinf(CameraRot.y + D3DX_PI / 2) * PLAYER_DASH_MOVE;			// 移動量
+			m_pos.z += cosf(CameraRot.y + D3DX_PI / 2) * PLAYER_DASH_MOVE;			// 移動量
+			m_rotDest.y = (CameraRot.y - D3DX_PI / 2);							// 向く角度
+
+			if (m_DashAnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_DASH);
+				m_DashAnimationFlag = true;
+			}
+		}
+	}
+
+	//============================================
+	// ADS視点時の移動
+	//============================================
 	else if (m_PlayerAttackFlag == true)
 	{
 		// 上方向
-		if (pInput->GetKeyboardPress(DIK_W) == true)
+		if (pInput->GetKeyboardPress(DIK_W) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < -0.5f))
 		{// Wキーが押された
-			if (pInput->GetKeyboardPress(DIK_A) == true)
+			if (pInput->GetKeyboardPress(DIK_A) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
 			{
-				m_pos.x -= sinf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER__ADS_MOVE;	// 移動量
-				m_pos.z -= cosf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER__ADS_MOVE;	// 移動量
-				m_rotDest.y = (CameraRot.y + D3DX_PI * 0.75f);					// 向く角度
+				m_pos.x -= sinf(CameraRot.y + D3DX_PI) * PLAYER__ADS_MOVE;	// 移動量
+				m_pos.z -= cosf(CameraRot.y + D3DX_PI) * PLAYER__ADS_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y + D3DX_PI);						// 向く角度
 			}
-			else if (pInput->GetKeyboardPress(DIK_D) == true)
+			else if (pInput->GetKeyboardPress(DIK_D) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
 			{
-				m_pos.x += sinf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER__ADS_MOVE;	// 移動量
-				m_pos.z += cosf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER__ADS_MOVE;	// 移動量
-				m_rotDest.y = (CameraRot.y - D3DX_PI * 0.75f);					// 向く角度
+				m_pos.x += sinf(CameraRot.y + D3DX_PI / 2) * PLAYER__ADS_MOVE;			// 移動量
+				m_pos.z += cosf(CameraRot.y + D3DX_PI / 2) * PLAYER__ADS_MOVE;			// 移動量
+				m_rotDest.y = (CameraRot.y - D3DX_PI / 2);							// 向く角度
 			}
 			else
 			{
@@ -723,23 +918,30 @@ void CPlayer::PlayerMove(void)
 				m_rotDest.y = (CameraRot.y + D3DX_PI);							// 向く角度
 			}
 
-			//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
 		// 下方向
-		else if (pInput->GetKeyboardPress(DIK_S) == true)
+		else if (pInput->GetKeyboardPress(DIK_S) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > 0.5f))
 		{// Sキーが押された
-			if (pInput->GetKeyboardPress(DIK_A) == true)
+			if (pInput->GetKeyboardPress(DIK_A) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
 			{
-				m_pos.x -= sinf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER__ADS_MOVE;	// 移動量
-				m_pos.z -= cosf(CameraRot.y + D3DX_PI * 0.25f) * PLAYER__ADS_MOVE;	// 移動量
-				m_rotDest.y = (CameraRot.y + D3DX_PI * 0.25f);					// 向く角度
+				m_pos.x -= sinf(CameraRot.y + D3DX_PI) * PLAYER__ADS_MOVE;	// 移動量
+				m_pos.z -= cosf(CameraRot.y + D3DX_PI) * PLAYER__ADS_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y + D3DX_PI);					// 向く角度
 			}
-			else if (pInput->GetKeyboardPress(DIK_D) == true)
+			else if (pInput->GetKeyboardPress(DIK_D) == true
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
 			{
-				m_pos.x += sinf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER__ADS_MOVE;	// 移動量
-				m_pos.z += cosf(CameraRot.y + D3DX_PI * 0.75f) * PLAYER__ADS_MOVE;	// 移動量
-				m_rotDest.y = (CameraRot.y - D3DX_PI * 0.25f);					// 向く角度
+				m_pos.x += sinf(CameraRot.y + D3DX_PI) * PLAYER__ADS_MOVE;	// 移動量
+				m_pos.z += cosf(CameraRot.y + D3DX_PI) * PLAYER__ADS_MOVE;	// 移動量
+				m_rotDest.y = (CameraRot.y - D3DX_PI);					// 向く角度
 			}
 			else
 			{
@@ -748,40 +950,125 @@ void CPlayer::PlayerMove(void)
 				m_rotDest.y = CameraRot.y;										// 向く角度
 			}
 
-			//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
 		// 左方向
-		else if (pInput->GetKeyboardPress(DIK_A) == true)
+		else if (pInput->GetKeyboardPress(DIK_A) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f))
 		{// Aキーが押された
 			m_pos.x -= sinf(CameraRot.y + D3DX_PI / 2) * PLAYER__ADS_MOVE;			// 移動量
 			m_pos.z -= cosf(CameraRot.y + D3DX_PI / 2) * PLAYER__ADS_MOVE;			// 移動量
 			m_rotDest.y = (CameraRot.y + D3DX_PI / 2);							// 向く角度
 
-																				//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
 		// 右方向
-		else if (pInput->GetKeyboardPress(DIK_D) == true)
+		else if (pInput->GetKeyboardPress(DIK_D) == true
+			|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
 		{// Dキーが押された
 			m_pos.x += sinf(CameraRot.y + D3DX_PI / 2) * PLAYER__ADS_MOVE;			// 移動量
 			m_pos.z += cosf(CameraRot.y + D3DX_PI / 2) * PLAYER__ADS_MOVE;			// 移動量
 			m_rotDest.y = (CameraRot.y - D3DX_PI / 2);							// 向く角度
 
-																				//移動モーションの設定
-			SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			if (m_AnimationFlag == false)
+			{
+				//移動モーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+				m_AnimationFlag = true;
+			}
 		}
+	}
+
+	//============================================
+	//	エイムの向きを変える処理
+	//============================================
+	if (!(pJoyPad->GetJoypadPress(pJoyPad->JOYKEY_LEFT_SHOULDER)))
+	{
+		if (pInput->GetKeyboardPress(DIK_UP) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).y < -0.5f/* && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).y < -0.5f*/))
+		{	//UPキーを押しているとき
+
+			m_ADSRotDest.x += 0.025f;	//プレイヤーの上方向の加算
+			CameraRot.x += 0.025f;		//カメラの上方向の加算
+			if (m_ADSRotDest.x >= 0.3f)
+			{
+				m_ADSRotDest.x = 0.3f;
+			}
+		}
+		if (pInput->GetKeyboardPress(DIK_DOWN) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).y > 0.5f /*&& pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).y > -0.5f*/))
+		{	//DOWNキーを押しているとき
+
+			m_ADSRotDest.x -= 0.025f;	//プレイヤーの下方向の加算
+			CameraRot.x -= 0.025f;		//カメラの下方向の加算
+			if (m_ADSRotDest.x <= -0.3f)
+			{
+				m_ADSRotDest.x = -0.3f;
+			}
+		}
+		if (pInput->GetKeyboardPress(DIK_LEFT) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).x < 0.5f/*f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).x < -0.5f*/))
+		{	//LEFTキーを押しているとき
+
+			m_ADSRotDest.y -= 0.025f;			//プレイヤーの左方向の加算
+			CameraRot.y -= 0.025f;		//カメラの左方向の加算
+		}
+		if (pInput->GetKeyboardPress(DIK_RIGHT) == true || (/*pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).x > 0.5f && */pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).x > -0.5f))
+		{	//RIGHTキーを押しているとき
+
+			m_ADSRotDest.y += 0.025f;	//プレイヤーの右方向の加算
+			CameraRot.y += 0.025f;		//カメラの右方向の加算
+		}
+	}
+	//============================================
+	//  カメラの角度の正規化
+	//============================================
+	if (CameraRot.y > D3DX_PI)
+	{
+		CameraRot.y = CameraRot.y - D3DX_PI * 2;
+	}
+	else if (CameraRot.y < -D3DX_PI)
+	{
+		CameraRot.y = CameraRot.y + D3DX_PI * 2;
+	}
+	//============================================
+	//  ADS視点の角度の正規化
+	//============================================
+	if (m_ADSRotDest.y > D3DX_PI)
+	{
+		m_ADSRotDest.y = m_ADSRotDest.y - D3DX_PI * 2;
+	}
+	else if (m_ADSRotDest.y < -D3DX_PI)
+	{
+		m_ADSRotDest.y = m_ADSRotDest.y + D3DX_PI * 2;
 	}
 
 	//============================================
 	//	モーションの設定
 	//============================================
-	if (pInput->GetKeyboardPress(DIK_W) == false && pInput->GetKeyboardPress(DIK_A) == false
-		&& pInput->GetKeyboardPress(DIK_S) == false && pInput->GetKeyboardPress(DIK_D) == false
-		&& pInput->GetKeyboardPress(DIK_LSHIFT) == false)
+	if (!(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < -0.5f)
+		&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f)
+		&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > 0.5f)
+		&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f)
+		&& m_MotionType != MOTIONTYPE_NEUTRALMOTION 
+		|| pJoyPad->GetJoypadPress(pJoyPad->JOYKEY_LEFT_SHOULDER))
 	{
+		//サウンドの停止
+		StopSound(SOUND_LABEL_SE_RUN);
 		//ニュートラルモーションの設定
 		SetMotionType(CPlayer::MOTIONTYPE_NEUTRALMOTION);
+		//フラグの初期化
+		m_AnimationFlag = false;
+		m_DashAnimationFlag = false;
+		m_SoundRunFlag = false;
+		m_DashFlag = false;
 	}
 
 	//============================================
@@ -798,7 +1085,7 @@ void CPlayer::PlayerMove(void)
 
 	if (pInput->GetKeyboardPress(DIK_LSHIFT) == false)
 	{
-		// 角度慣性
+		 //角度慣性
 		PlayerRot += (m_rotDest - PlayerRot) * 0.1f;
 	}
 
@@ -813,10 +1100,35 @@ void CPlayer::PlayerMove(void)
 	{
 		PlayerRot.y = PlayerRot.y + D3DX_PI * 2;
 	}
+
+	//============================================
+	//  プレイヤーの移動範囲
+	//============================================
+	//右の移動範囲
+	if (m_pos.x >= 1050.0f)
+	{
+		m_pos.x = 1050.0f;
+	}
+	//左の移動範囲
+	if (m_pos.x <= -150.0f)
+	{
+		m_pos.x = -150.0f;
+	}
+	//奥の移動範囲
+	if (m_pos.z <= -1050.0f)
+	{
+		m_pos.z = -1050.0f;
+	}
+	//手前の移動範囲
+	if (m_pos.z >= 150.0f)
+	{
+		m_pos.z = 150.0f;
+	}
+
 	//向きの設定
 	m_rot = PlayerRot;
 	//デバック表示
-	CDebugProc::Print("プレイヤーの向いてる角度:%f\nプレイヤーの高さ:%.2f\nプレイヤーのX位置:%f\nプレイヤーのZ位置:%f\n", PlayerRot.y, m_pos.y, m_pos.x, m_pos.z);
+	//CDebugProc::Print("プレイヤーの向いてる角度:%f\nプレイヤーの高さ:%.2f\nプレイヤーのX位置:%f\nプレイヤーのZ位置:%f\n", PlayerRot.y, m_pos.y, m_pos.x, m_pos.z);
 }
 
 //============================================
@@ -826,74 +1138,159 @@ void CPlayer::PlayerAttack(void)
 {
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
+	CJoyPad *pJoyPad = CApplication::GetJpyPad();
 	//プレイヤーの位置取得
 	D3DXVECTOR3 PlayerPos = GetPos();
 	//カメラの向きの取得
 	D3DXVECTOR3 CameraRot = CApplication::GetCamera()->GetCameraRot();
 
+	if (m_PlayerAttackFlag == false)
+	{
+		if (pJoyPad->GetJoypadTrigger(pJoyPad->JOYKEY_A) && m_BombUseCountFlag == false)
+		{
+			if (CGame::GetItem()->GetHitFlag() == true)
+			{	//アイテムを取った時
+				m_BombUseCount = GetBombUseCount();
+				CGame::GetItem()->SetHitFlag(false);
+			}
+		
+			m_ThrowFlag = true;						//投げるモーションをtrueにする
+			CGame::GetUi()[0]->SubBomb(1);	
+			//爆弾の生成
+			m_pBullet = CBullet::Create(D3DXVECTOR3(m_pos.x, 32.0f, m_pos.z), D3DXVECTOR3(-sinf(m_ADSRotDest.y) * 15.0f, sinf(m_ADSRotDest.x) * 15.0f, -cosf(m_ADSRotDest.y) * 15.0f), D3DXVECTOR3(9.0f, 9.0f, 0.0f), 40, CBullet::BULLETTYPE_BOMB);
+			m_BombUseCount--;
+		}
+		if (m_ThrowFlag == true)
+		{	//投げるモーションがtrueの時
+			m_ThrowTime--;
+			//投げるモーションに設定
+			SetMotionType(CPlayer::MOTIONTYPE_THROW);
+			if (m_ThrowTime <= 0
+				&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < -0.5f)
+				&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f)
+				&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > 0.5f)
+				&& !(pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
+			{ //投げるモーションが終わるまでの時間が0以下になったら　&& スティックを押していないとき
+
+				m_ThrowFlag = false;				//投げるモーションをfalseにする
+				m_ThrowTime = 50;					//投げるモーションが終わるまでの時間を初期化
+				//ニュートラルモーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_NEUTRALMOTION);
+			}
+			if (m_ThrowTime <= 0
+				&& (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y < -0.5f)
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x < 0.5f)
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > -0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).y > 0.5f)
+				|| (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > 0.5f && pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_LEFT_STICK).x > -0.5f))
+			{ //投げるモーションが終わるまでの時間が0以下になったら　&& スティックを押しているとき
+
+				m_ThrowFlag = false;				//投げるモーションをfalseにする
+				m_ThrowTime = 50;					//投げるモーションが終わるまでの時間を初期化
+				//ニュートラルモーションの設定
+				SetMotionType(CPlayer::MOTIONTYPE_MOVE);
+			}
+		}
+		if (m_BombUseCount <= 0)
+		{
+			m_BombUseCountFlag = true;
+		}
+	}
+
 	//============================================
 	//	プレイヤーの攻撃処理
 	//============================================
 	//spaceキーが押された
-	if (pInput->GetKeyboardPress(DIK_LSHIFT) == true)
+	if (pJoyPad->GetJoypadPress(pJoyPad->JOYKEY_LEFT_SHOULDER)
+		&& m_PlayerAttackFlag == false)
 	{
+		m_pReticle = CReticle::Create(D3DXVECTOR3(700.0f, 145.0f, 0.0f), D3DXVECTOR3(25.0f, 25.0f, 0.0f));	//レティクルの生成
+
 		//プレイヤーが攻撃態勢に入った
 		m_PlayerAttackFlag = true;
 
 		//エイムした時のカメラの位置の設定
 		CApplication::GetCamera()->SetOffset(D3DXVECTOR3(-20.0f, 45.0f, 40.0f), D3DXVECTOR3(0.0f, 0.0f, -100.0f));
-
+	}
+	//LSHIFT押していないとき && プレイヤーが攻撃態勢になっているとき
+	if (!(pJoyPad->GetJoypadPress(pJoyPad->JOYKEY_LEFT_SHOULDER))
+		&& m_PlayerAttackFlag == true)
+	{
+		if (m_pReticle != nullptr)
+		{
+			m_pReticle->Uninit();
+		}
+		//プレイヤーが攻撃体制をやめた
+		m_PlayerAttackFlag = false;
+		//移動のアニメーションフラグをfalseに戻す
+		m_AnimationFlag = false;
+		//投げるアニメーションフラグをfalseに戻す
+		m_ThrowFlag = false;
+		//カメラの向きの設定
+		CApplication::GetCamera()->SetOffset(D3DXVECTOR3(0.0f, 75.0f, 150.0f), D3DXVECTOR3(0.0f, 0.0f, -100.0f));
+	}
+	if(m_PlayerAttackFlag == true)
+	{
 		//============================================
 		//	攻撃処理
 		//============================================
-		if (pInput->GetKeyboardTrigger(DIK_RETURN) == true)
+		if (pJoyPad->GetJoypadPress(pJoyPad->JOYKEY_RIGHT_SHOULDER))
 		{	//LSHIFT押し続けているとき && ENTERを押したとき
 
 			//攻撃モーションに設定
 			SetMotionType(MOTIONTYPE_ATTACK);
-
-			//弾の生成
-			m_pBullet = CBullet::Create(D3DXVECTOR3(m_pos.x, 32.0f, m_pos.z), D3DXVECTOR3(-sinf(m_rot.y) * 15.0f, sinf(m_rot.x) * 15.0f, -cosf(m_rot.y) * 15.0f), 20);
+	
+			m_BulletCreateTime--;
+			if (m_BulletCreateTime <= 0 && m_BulletCreateFlag == false)
+			{
+				//サウンドの再生
+				PlaySound(SOUND_LABEL_SE_SHOT);
+				//弾の生成
+				m_pBullet = CBullet::Create(D3DXVECTOR3(m_pos.x, 32.0f, m_pos.z), D3DXVECTOR3(-sinf(m_ADSRotDest.y) * 15.0f, sinf(m_ADSRotDest.x) * 15.0f, -cosf(m_ADSRotDest.y) * 15.0f), D3DXVECTOR3(0.5f, 0.5f, 0.0f), 50, CBullet::BULLETTYPE_PLAYER);
+				m_BulletCreateFlag = true;
+			}
+			if (m_BulletCreateTime <= 0 && m_BulletCreateFlag == true)
+			{
+				m_BulletCreateTime = BULLET_TIME;
+				m_BulletCreateFlag = false;
+			}
 		}
 
 		//============================================
 		//	エイムの向きを変える処理
 		//============================================
-		if (pInput->GetKeyboardPress(DIK_UP) == true)
+		if (pInput->GetKeyboardPress(DIK_UP) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).y < -0.5f))
 		{	//UPキーを押しているとき
 
-			m_rot.x += 0.01f;			//プレイヤーの上方向の加算
-			CameraRot.x += 0.01f;		//カメラの上方向の加算
+			m_ADSRotDest.x += 0.0085f;	//プレイヤーの上方向の加算
+			CameraRot.x += 0.0085f;		//カメラの上方向の加算
 
-			if (CameraRot.x >= 0.3f)
-			{	//カメラが向ける範囲
-
-				CameraRot.x = 0.3f;		//カメラの固定
+			if (m_ADSRotDest.x >= 0.3f)
+			{
+				m_ADSRotDest.x = 0.3f;
 			}
 		}
-		if (pInput->GetKeyboardPress(DIK_DOWN) == true)
+		if (pInput->GetKeyboardPress(DIK_DOWN) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).y > 0.5f))
 		{	//DOWNキーを押しているとき
 
-			m_rot.x -= 0.01f;			//プレイヤーの下方向の加算
-			CameraRot.x -= 0.01f;		//カメラの下方向の加算
+			m_ADSRotDest.x -= 0.0085f;		//プレイヤーの下方向の加算
+			CameraRot.x -= 0.0085f;		//カメラの下方向の加算
 
-			if (CameraRot.x <= -0.3f)
-			{	//カメラが向ける範囲
-
-				CameraRot.x = -0.3f;	//カメラの固定
+			if (m_ADSRotDest.x <= -0.1f)
+			{
+				m_ADSRotDest.x = -0.1f;
 			}
 		}
-		if (pInput->GetKeyboardPress(DIK_LEFT) == true)
+		if (pInput->GetKeyboardPress(DIK_LEFT) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).x < 0.5f))
 		{	//LEFTキーを押しているとき
 
-			m_rot.y -= 0.01f;			//プレイヤーの左方向の加算
-			CameraRot.y -= 0.01f;		//カメラの左方向の加算
+			m_ADSRotDest.y -= 0.0085f;	//プレイヤーの左方向の加算
+			CameraRot.y -= 0.0085f;		//カメラの左方向の加算
 		}	
-		if (pInput->GetKeyboardPress(DIK_RIGHT) == true)
+		if (pInput->GetKeyboardPress(DIK_RIGHT) == true || (pJoyPad->GetJoypadStick(pJoyPad->JOYKEY_RIGHT_STICK).x > -0.5f))
 		{	//RIGHTキーを押しているとき
 
-			m_rot.y += 0.01f;			//プレイヤーの右方向の加算
-			CameraRot.y += 0.01f;		//カメラの右方向の加算
+			m_ADSRotDest.y += 0.0085f;	//プレイヤーの右方向の加算
+			CameraRot.y += 0.0085f;		//カメラの右方向の加算
 		}
 
 		//============================================
@@ -908,25 +1305,11 @@ void CPlayer::PlayerAttack(void)
 			CameraRot.y = CameraRot.y + D3DX_PI * 2;
 		}
 
-		//プレイヤーの向きの保存
-		SetRot(m_rot);
-
 		//攻撃待機モーションに設定
 		SetMotionType(MOTIONTYPE_STANDBYATTACK);
 	}
-	//LSHIFT押していないとき && プレイヤーが攻撃態勢になっているとき
-	else if (pInput->GetKeyboardPress(DIK_LSHIFT) == false && m_PlayerAttackFlag == true)
-	{
-		//プレイヤーが攻撃体制をやめた
-		m_PlayerAttackFlag = false;
-		//プレイヤーの向きの取得
-		m_rot = GetRot();
-		//プレイヤーの向きの設定
-		SetRot(m_rot);
-		//カメラの向きの設定
-		CApplication::GetCamera()->SetOffset(D3DXVECTOR3(0.0f, 75.0f, 150.0f),D3DXVECTOR3(0.0f, 0.0f, -100.0f));
-	}
-
+	//プレイヤーの向きの保存
+	SetRot(m_ADSRotDest);
 	//カメラの向きの設定
 	CApplication::GetCamera()->SetRot(CameraRot);
 }
@@ -974,11 +1357,70 @@ void CPlayer::CollisionPlayer(D3DXVECTOR3 * pPos, D3DXVECTOR3 * pPosOld, D3DXVEC
 }
 
 //============================================
+// 全部のモデルとの当たり判定
+//============================================
+void CPlayer::CollisionMaxModel()
+{
+	for (int nCnt = 0; nCnt < NUMBER_OF_MODELS; nCnt++)
+	{
+		//モデルとの当たり判定
+		CModelParts *pModelParts = CGame::GetModel()->GetModelParts()[nCnt];
+		pModelParts->ModelCollision(&m_pos, &m_posOld, m_size);
+	}
+}
+
+//============================================
 // モーションの種類の設定
 //============================================
 void CPlayer::SetMotionType(MOTIONTYPE type)
 {
 	m_MotionType = type;
+
+	for (int nCnt = 0; nCnt < MODEL_NUMBER; nCnt++)
+	{
+		//速度の計算
+		m_FrameSpeed[nCnt] = (m_MotionSet[m_MotionType]->GetKeySet(0)->GetKey(nCnt)->GetPos() - m_apModel[nCnt]->GetPos());
+		m_FrameSpeed[nCnt].x /= (float)m_MotionSet[m_MotionType]->GetKeySet(0)->GetFrame();
+		m_FrameSpeed[nCnt].y /= (float)m_MotionSet[m_MotionType]->GetKeySet(0)->GetFrame();
+		m_FrameSpeed[nCnt].z /= (float)m_MotionSet[m_MotionType]->GetKeySet(0)->GetFrame();
+		//回転の計算
+		m_RotSpeed[nCnt] = (m_MotionSet[m_MotionType]->GetKeySet(0)->GetKey(nCnt)->GetRot() - m_apModel[nCnt]->GetRot());
+		m_RotSpeed[nCnt].x /= (float)m_MotionSet[m_MotionType]->GetKeySet(0)->GetFrame();
+		m_RotSpeed[nCnt].y /= (float)m_MotionSet[m_MotionType]->GetKeySet(0)->GetFrame();
+		m_RotSpeed[nCnt].z /= (float)m_MotionSet[m_MotionType]->GetKeySet(0)->GetFrame();
+	}
+}
+
+//============================================
+// プレイヤーの体力の設定
+//============================================
+void CPlayer::SetPlayerLife(int life)
+{
+	m_Life = life;
+}
+
+//============================================
+// 爆弾を何回使用したのかの設定処理
+//============================================
+void CPlayer::SetBombUseCount(int usecnt)
+{
+	m_BombUseCount = usecnt;
+}
+
+//============================================
+// 爆弾を使用したのかの設定処理
+//============================================
+void CPlayer::GetBombUseFlag(bool flag)
+{
+	m_BombUseCountFlag = flag;
+}
+
+//============================================
+// プレイヤーのインスタンスの設定処理
+//============================================
+void CPlayer::SetBullet(CBullet * bullet)
+{
+	m_pBullet = bullet;
 }
 
 //============================================
@@ -1051,4 +1493,20 @@ D3DXVECTOR3 CPlayer::GetRot(void)
 float CPlayer::GetLength(void)
 {
 	return 0.0f;
+}
+
+//============================================
+// 爆弾を何回使用したのかの取得処理
+//============================================
+int CPlayer::GetBombUseCount(void)
+{
+	return m_BombUseCount;
+}
+
+//============================================
+// 爆弾を使用したのかの取得処理
+//============================================
+bool CPlayer::GetBombUseFlag(void)
+{
+	return m_BombUseCountFlag;
 }

@@ -46,8 +46,22 @@ HRESULT CNumber::Init(void)
 	//============================================
 	//メンバ変数の初期化
 	//============================================
-	SetTexture(10.0f, 0.0f, 1.0f, 0.0f);
-	BindTexture(m_pTextureNumber);
+
+	switch (m_type)
+	{
+	case CNumber::NUMBERTYPE_SCORE:
+		SetTexture(10.0f, 0.0f, 1.0f, 0.0f);
+		BindTexture(m_pTextureNumber);
+		break;
+	case CNumber::NUMBERTYPE_BOMB:
+		SetTexture(10.0f, 3.0f, 1.0f, 0.0f);
+		BindTexture(m_pTextureNumber);
+		break;
+	case CNumber::NUMBERTYPE_MAX:
+		break;
+	default:
+		break;
+	}
 
 	return S_OK;
 }
@@ -83,7 +97,7 @@ void CNumber::Draw()
 //============================================
 // 数字の生成
 //============================================
-CNumber *CNumber::Create(const D3DXVECTOR3 &pos, D3DXVECTOR3 size)
+CNumber *CNumber::Create(const D3DXVECTOR3 &pos, D3DXVECTOR3 size, NUMBERTYPE type)
 {
 	CNumber *pNumber = nullptr;
 
@@ -93,6 +107,7 @@ CNumber *CNumber::Create(const D3DXVECTOR3 &pos, D3DXVECTOR3 size)
 	//nullチェック
 	if (pNumber != nullptr)
 	{
+		pNumber->SetType(type);
 		//初期化処理
 		pNumber->Init();
 		//設定処理

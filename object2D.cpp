@@ -27,7 +27,6 @@ CObject2D::CObject2D(int nPriority) : CObject(nPriority)
 	m_pos = D3DXVECTOR3(0.0f,0.0f,0.0f);		//位置のクリア
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//移動のクリア
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//回転のクリア
-	m_col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);	//色のクリア
 	m_fWidth = 0.0f;							//幅のクリア
 	m_fHeight = 0.0f;							//高さのクリア
 	m_fLength = 0;								//拡大縮小のスケールのクリア
@@ -56,7 +55,7 @@ HRESULT CObject2D::Init(void)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//移動の初期化
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//回転の初期化
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);									//色の初期化
-	m_size = D3DXVECTOR3(100.0f, 100.0f,0.0f);									//サイズ
+	m_size = D3DXVECTOR3(50.0f, 50.0f,0.0f);									//サイズ
 	m_fWidth = 25.0f;															//幅の初期化
 	m_fHeight = 25.0f;															//高さの初期化
 	m_fLength = sqrtf(((m_fWidth * m_fWidth) + (m_fHeight * m_fHeight))) / 2;	//拡大縮小のスケールの初期化
@@ -97,10 +96,10 @@ HRESULT CObject2D::Init(void)
 	pVtx[3].rhw = 1.0f;
 
 	// 頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[0].col = m_col;
+	pVtx[1].col = m_col;
+	pVtx[2].col = m_col;
+	pVtx[3].col = m_col;
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -135,48 +134,7 @@ void CObject2D::Uninit(void)
 //============================================
 void CObject2D::Update(void)
 {
-	VERTEX_2D*pVtx;		//頂点情報へのポインタ
 
-	//////*************************************
-	//////	回転拡大
-	//////*************************************
-
-	////回転率
-	////m_rot.z += 0.5f;
-
-	////拡大縮小
-	////m_nTimer++;
-
-	////タイムが0～60までは拡大
-	////if (m_nTimer >= 0 && m_nTimer < 60)
-	////{
-	////	拡大される大きさ
-	////	m_fLength += 1.0f;
-	////}
-
-	////タイムが60～120までは縮小
-	////else if (m_nTimer >= 60 && m_nTimer < 120)
-	////{
-	////	縮小される小ささ
-	////	m_fLength -= 1.0f;
-	////}
-
-	////タイムが121以上だったらタイムを0に戻す
-	////else if (m_nTimer >= 121)
-	////{
-	////	m_nTimer = 0;
-	////}
-
-	//頂点バッファをロックし、頂点情報へのポインタを取得
- 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y - m_size.y, 0);
-	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y - m_size.y, 0);
-	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y + m_size.y, 0);
-	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y + m_size.y, 0);
-
-	//頂点バッファをアンロックする
-	m_pVtxBuff->Unlock();
 }
 
 //============================================
@@ -273,10 +231,10 @@ void CObject2D::SetCol(D3DXCOLOR col)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[0].col = D3DXCOLOR(m_col.r, m_col.g, m_col.b, m_col.a);
+	pVtx[1].col = D3DXCOLOR(m_col.r, m_col.g, m_col.b, m_col.a);
+	pVtx[2].col = D3DXCOLOR(m_col.r, m_col.g, m_col.b, m_col.a);
+	pVtx[3].col = D3DXCOLOR(m_col.r, m_col.g, m_col.b, m_col.a);
 
 	//頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();

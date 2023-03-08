@@ -18,7 +18,7 @@
 //============================================
 // スコアのコンストラクタ
 //============================================
-CScore::CScore() : CObject(4)
+CScore::CScore() : CObject(PRIORITY_LEVEL3)
 {
 	//============================================
 	//メンバ変数のクリア
@@ -53,7 +53,7 @@ HRESULT CScore::Init(void)
 	for (int nCnt = 0; nCnt < SCORE_DIGIT; nCnt++)
 	{
 		//スコアの生成
-		m_apNumber[nCnt] = CNumber::Create(D3DXVECTOR3(800.0f + 70.0f * nCnt, 50.0f, 0.0f), D3DXVECTOR3(40.0f, 40.0f, 0.0f));
+		m_apNumber[nCnt] = CNumber::Create(D3DXVECTOR3(800.0f + 70.0f * nCnt, 50.0f, 0.0f), D3DXVECTOR3(40.0f, 40.0f, 0.0f),CNumber::NUMBERTYPE_SCORE);
 	}
 	m_nScore = 0;
 	return S_OK;

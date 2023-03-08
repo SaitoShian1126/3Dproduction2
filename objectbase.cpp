@@ -63,7 +63,7 @@ HRESULT CObjectBase::Init(void)
 	m_ObjectBasePos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 	m_ObjectBaseRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_ObjectBaseMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_ObjectBaseSize = D3DXVECTOR3(1.5f, 1.5f, 0.0f);
+	m_ObjectBaseSize = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_ObjectBaseCol = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	m_fLength = 0.0f;
 	m_Radius = 0.0f;
@@ -84,10 +84,10 @@ HRESULT CObjectBase::Init(void)
 	m_pVtxBuffObjectBase->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定(ワールド座標ではなくローカル座標を設定)
-	pVtx[0].pos = D3DXVECTOR3(m_ObjectBasePos.x - m_ObjectBaseSize.x, m_ObjectBasePos.y + m_ObjectBaseSize.y, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(m_ObjectBasePos.x + m_ObjectBaseSize.x, m_ObjectBasePos.y + m_ObjectBaseSize.y, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(m_ObjectBasePos.x - m_ObjectBaseSize.x, m_ObjectBasePos.y - m_ObjectBaseSize.y, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(m_ObjectBasePos.x + m_ObjectBaseSize.x, m_ObjectBasePos.y - m_ObjectBaseSize.y, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(-m_ObjectBaseSize.x, m_ObjectBaseSize.y, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(m_ObjectBaseSize.x, m_ObjectBaseSize.y, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-m_ObjectBaseSize.x, -m_ObjectBaseSize.y, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(m_ObjectBaseSize.x, -m_ObjectBaseSize.y, 0.0f);
 
 	//各頂点の法線の設定(※ベクトルの大きさは1にする必要がある)
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -96,10 +96,10 @@ HRESULT CObjectBase::Init(void)
 	pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 	//頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[0].col = m_ObjectBaseCol;
+	pVtx[1].col = m_ObjectBaseCol;
+	pVtx[2].col = m_ObjectBaseCol;
+	pVtx[3].col = m_ObjectBaseCol;
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -109,6 +109,9 @@ HRESULT CObjectBase::Init(void)
 
 	//頂点バッファをアンロック
 	m_pVtxBuffObjectBase->Unlock();
+
+	//サイズの設定
+	SetSize(m_ObjectBaseSize);
 
 	return S_OK;
 }
@@ -125,6 +128,13 @@ void CObjectBase::Uninit(void)
 		m_pVtxBuffObjectBase = nullptr;
 	}
 
+	//テクスチャの破棄
+	if (m_pTextureObjectBase != nullptr)
+	{
+		m_pTextureObjectBase->Release();
+		m_pTextureObjectBase = nullptr;
+	}
+
 	//破棄処理
 	CObject::Release();
 }
@@ -134,40 +144,7 @@ void CObjectBase::Uninit(void)
 //============================================
 void CObjectBase::Update()
 {
-	//頂点情報へのポインタ
-	VERTEX_3D * pVtx = NULL;
 
-	//頂点バッファをロック
-	m_pVtxBuffObjectBase->Lock(0, 0, (void**)&pVtx, 0);
-
-	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
-	{
-		//位置の更新
-		m_ObjectBasePos += m_ObjectBaseMove;
-
-		//頂点カラーの設定
-		pVtx[0].col = m_ObjectBaseCol;
-		pVtx[1].col = m_ObjectBaseCol;
-		pVtx[2].col = m_ObjectBaseCol;
-		pVtx[3].col = m_ObjectBaseCol;
-
-		//頂点座標の更新
-		pVtx[0].pos = D3DXVECTOR3(-m_Radius, m_Radius, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(m_Radius, m_Radius, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(-m_Radius, -m_Radius, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(m_Radius, -m_Radius, 0.0f);
-
-		m_Life--;
-		if (m_Life <= 0)
-		{
-			Uninit();
-			return;
-		}
-
-		pVtx += 4;
-	}
-	//頂点バッファをアンロック
-	m_pVtxBuffObjectBase->Unlock();
 }
 
 //============================================
@@ -178,7 +155,7 @@ void CObjectBase::Draw()
 	//GetDeviveの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
 	//計算用マトリックス
-	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
+	D3DXMATRIX mtxRot, mtxTrans;
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_ObjectBasemtxWorld);//行列初期化関数(第一引数の行列を単位行列に初期化)
@@ -198,13 +175,18 @@ void CObjectBase::Draw()
 	m_ObjectBasemtxWorld._32 = mtxView._23;
 	m_ObjectBasemtxWorld._33 = mtxView._33;
 
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_ObjectBaseRot.y, m_ObjectBaseRot.x, m_ObjectBaseRot.z);	//行列回転関数(第一引数にヨー(y)ピッチ(x)ロール(z)方向の回転行列を作成)
-	D3DXMatrixMultiply(&m_ObjectBasemtxWorld, &m_ObjectBasemtxWorld, &mtxRot);							//行列掛け算関数(第2引数 * 第三引数を第一引数に格納)
-
 	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, m_ObjectBasePos.x, m_ObjectBasePos.y, m_ObjectBasePos.z);			//行列移動関数(第一引数にx,y,z方向の移動行列を作成)
+	D3DXMatrixTranslation(&mtxTrans, m_ObjectBasePos.x, m_ObjectBasePos.y, m_ObjectBasePos.z);		//行列移動関数(第一引数にx,y,z方向の移動行列を作成)
 	D3DXMatrixMultiply(&m_ObjectBasemtxWorld, &m_ObjectBasemtxWorld, &mtxTrans);
+
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &m_ObjectBasemtxWorld);	//ワールド座標行列の設定
+
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, m_pVtxBuffObjectBase, 0, sizeof(VERTEX_3D));
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
 
 	//ライトを無効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -219,38 +201,20 @@ void CObjectBase::Draw()
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &m_ObjectBasemtxWorld);	//ワールド座標行列の設定
-
-	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, m_pVtxBuffObjectBase, 0, sizeof(VERTEX_3D));
-
-	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_3D);
-
 	//テクスチャの設定
 	pDevice->SetTexture(0, m_pTextureObjectBase);
 
 	//ビルボードの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
-	//ライトを有効に戻す
-	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-
-	//設定を元に戻す
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	//Zバッファの設定を元に戻す
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
-	//アルファテストを無効
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
 	//テクスチャの解除
 	pDevice->SetTexture(0, NULL);
+
+	//アルファテストを無効に戻す
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+	//ライトを有効に戻す
+	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 //============================================
@@ -291,31 +255,6 @@ void CObjectBase::SetTextureY(float SplitX, float nNumIndexX, float SplitY, floa
 	m_pVtxBuffObjectBase->Unlock();
 }
 
-////============================================
-//// パーティクルの設定処理
-////============================================
-//void CObjectBase::SetParticle(D3DXVECTOR3 pos)
-//{
-//	VERTEX_3D*pVtx;		//頂点ポインタ
-//
-//	//頂点バッファをロック
-//	m_pVtxBuffObjectBase->Lock(0, 0, (void**)&pVtx, 0);
-//
-//	for (int nCnt = 0; nCnt < MAX_PARTICLE; nCnt++)
-//	{
-//			m_ObjectBasePos = pos;																//位置
-//			m_ObjectBaseMove.x = sinf((float)(rand() % 1000)) * ((float)(rand() % 15) / 150);	//xの移動量
-//			m_ObjectBaseMove.y = cosf((float)(rand() % 1000)) * ((float)(rand() % 15) / 150);	//yの移動量
-//			m_ObjectBaseMove.z = sinf((float)(rand() % 1000)) * ((float)(rand() % 15) / 150);	//zの移動量
-//			m_Radius = (float)(rand() % 200 + 20) / 500;										//半径の算出
-//			m_Life = 15;																		//寿命の算出
-//			m_ObjectBaseCol = D3DXCOLOR(1.0f, 0.1f, 0.2f, 1.0f);								//色
-//			break;
-//	}
-//	//頂点バッファをアンロック
-//	m_pVtxBuffObjectBase->Unlock();
-//}
-
 //============================================
 // 位置の設定
 //============================================
@@ -338,4 +277,19 @@ void CObjectBase::SetMove(D3DXVECTOR3 move)
 void CObjectBase::SetSize(D3DXVECTOR3 size)
 {
 	m_ObjectBaseSize = size;
+
+	//頂点情報へのポインタ
+	VERTEX_3D * pVtx = NULL;
+
+	//頂点バッファをロック
+	m_pVtxBuffObjectBase->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点座標の設定(ワールド座標ではなくローカル座標を設定)
+	pVtx[0].pos = D3DXVECTOR3(-m_ObjectBaseSize.x, m_ObjectBaseSize.y, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(m_ObjectBaseSize.x, m_ObjectBaseSize.y, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-m_ObjectBaseSize.x, -m_ObjectBaseSize.y, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(m_ObjectBaseSize.x, -m_ObjectBaseSize.y, 0.0f);
+
+	//頂点バッファをアンロック
+	m_pVtxBuffObjectBase->Unlock();
 }

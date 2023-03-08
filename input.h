@@ -56,24 +56,24 @@ public:
 	//============================================
 	enum JOYKEY
 	{
-		JOYKEY_UP = 0,			//十字キー（上）
-		JOYKEY_DOWN,			//十字キー（下）
-		JOYKEY_LEFT,			//十字キー（左）
-		JOYKEY_RIGHT,			//十字キー（右）
-		JOYKEY_START,			//STARTボタン
-		JOYKEY_BACK,			//BACKボタン
-		JOYKEY_PUSHLSTICK,		//左スティック押し込み
-		JOYKEY_PUSHRSTICK,		//右スティック押し込み
-		JOYKEY_LBUTTON5,		//左ボタン上
-		JOYKEY_RBUTTON5,		//右ボタン上
-		JOYKEY_10,				//不明
-		JOYKEY_11,				//不明
-		JOYKEY_A,				//Aボタン
-		JOYKEY_B,				//Bボタン
-		JOYKEY_X,				//Xボタン
-		JOYKEY_Y,				//Yボタン
-		JOYKEY_LEFT_STICK,		//Lスティック
-		JOYKEY_RIGHT_STICK,		//Rスティック
+		JOYKEY_UP = 0,				//十字ボタン上
+		JOYKEY_DOWN,				//十字ボタン下
+		JOYKEY_LEFT,				//十字ボタン左
+		JOYKEY_RIGHT,				//十字ボタン右
+		JOYKEY_START,				//スタートボタン
+		JOYKEY_BACK,				//バックボタン
+		JOYKEY_LEFT_THUMB,			//左スティック押込み
+		JOYKEY_RIGHT_THUMB,			//右スティック押込み
+		JOYKEY_LEFT_SHOULDER,		//L１ボタン
+		JOYKEY_RIGHT_SHOULDER,		//R１ボタン
+		JOYKEY_LEFT_TRIGGER,		//L２トリガー
+		JOYKEY_RIGHT_TRIGGER,		//R２トリガー
+		JOYKEY_A,					//Aボタン
+		JOYKEY_B,					//Bボタン
+		JOYKEY_X,					//Xボタン
+		JOYKEY_Y,					//Yボタン
+		JOYKEY_LEFT_STICK,			//左スティック
+		JOYKEY_RIGHT_STICK,			//右スティック
 		JOYKEY_MAX
 	};
 
@@ -83,14 +83,22 @@ public:
 	HRESULT Init(HINSTANCE hInstance, HWND hWnd)override;	//ジョイパッドの初期化処理
 	void Uninit(void)override;								//ジョイパッドの終了処理
 	void Update(void)override;								//ジョイパッドの更新処理
+
+	D3DXVECTOR3 GetJoypadStick(JOYKEY Key);					//ジョイパッドスティック処理
+	int GetJoypadTriggerPedal(JOYKEY Key);					//ジョイパッドトリガーペダル処理
+
 	bool GetJoypadPress(JOYKEY key);						//ジョイパッドのプレスの取得処理
 	bool GetJoypadTrigger(JOYKEY key);						//ジョイパッドのトリガー処理
+	bool *GetUseJoypad(void);								//ジョイパッドの使用状況を取得
 
 private:
-	XINPUT_STATE m_JoykeyState;						//ジョイパッドのプレス情報
-	XINPUT_STATE m_JoykeyStateTrigger;				//ジョイパッドのトリガー情報
-	int m_aJoykeyStateTrigger;						//ジョイパッドのトリガー情報
-	int m_aJoykeyStateRelese;						//ジョイパッドのリリース情報
+	XINPUT_STATE m_JoykeyState;								//ジョイパッドのプレス情報
+	XINPUT_STATE m_JoykeyStateTrigger;						//ジョイパッドのトリガー情報
+	XINPUT_VIBRATION m_JoyMoter;							//ジョイパッドのモーター
+	D3DXVECTOR3 m_JoyStickPos;								//ジョイスティックの傾き
+	int m_aJoykeyStateTrigger;								//ジョイパッドのトリガー情報
+	int m_aJoykeyStateRelese;								//ジョイパッドのリリース情報
+	bool m_bUseJoypad;										//ジョイパッドを使用してるかどうか
 };
 
 #endif

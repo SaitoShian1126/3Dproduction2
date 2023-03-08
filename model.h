@@ -21,7 +21,7 @@
 // マクロ定義
 //============================================
 #define MAX_MODEL_WORD		(512)	//ワード数
-#define NUMBER_OF_MODELS	(23)	//モデル数
+#define NUMBER_OF_MODELS	(64)	//モデル数
 
 //============================================
 // 前方宣言
@@ -56,7 +56,6 @@ private:
 	D3DXVECTOR3 m_rot;								//向き
 	D3DXVECTOR3 m_size;								//サイズ
 	CModelParts *m_apModel[NUMBER_OF_MODELS];		//モデルパーツ
-	//CLine *m_apLine[MAX_LINE];					//ライン
 	D3DXVECTOR3 m_posOld;							//目的の位置
 	D3DXVECTOR3 m_rotDest;							//目的の向き
 	D3DXMATRIX m_mtxWorld;							//ワールドマトリックス

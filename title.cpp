@@ -15,6 +15,8 @@
 #include "object2d.h"
 #include "fade.h"
 #include "input.h"
+#include "enter.h"
+#include "sound.h"
 
 //============================================
 // タイトルのコンストラクタ
@@ -50,6 +52,8 @@ HRESULT CTitle::Init(void)
 	//============================================
 	//メンバ変数の初期化
 	//============================================
+	m_flag = false;
+	m_BGMFlag = false;
 
 	m_pObject = CObject2D::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 	m_pObject->SetSize(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
@@ -63,6 +67,9 @@ HRESULT CTitle::Init(void)
 //============================================
 void CTitle::Uninit(void)
 {
+	//サウンドの停止
+	StopSound();
+
 	CObject::Release();
 }
 
@@ -73,10 +80,27 @@ void CTitle::Update()
 {
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
+	CJoyPad *pJoyPad = CApplication::GetJpyPad();
 	
-	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_TITLE)
+	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true
+		|| pJoyPad->GetJoypadTrigger(pJoyPad->JOYKEY_B) && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_TITLE)
 	{
-		CFade::SetFade(CApplication::MODE_GAME);
+		PlaySound(SOUND_LABEL_SE_BUTTOM);
+		CFade::SetFade(CApplication::MODE_TUTORIAL);
+	}
+	if (m_pFade->GetFade() == CFade::FADETYPE_NONE && m_flag == false)
+	{
+		CEnter::Create(D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR3(250.0f, 75.0f, 0.0f));
+		m_flag = true;
+	}
+
+	//============================================
+	// サウンドの再生
+	//============================================
+	if (m_BGMFlag == false)
+	{
+		PlaySound(SOUND_LABEL_TITLE);
+		m_BGMFlag = true;
 	}
 }
 

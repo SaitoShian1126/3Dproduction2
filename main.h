@@ -40,7 +40,7 @@ namespace
 	// ウインドウのクラス名
 	LPCTSTR CLASS_NAME = _T("AppClass");
 	// ウインドウのキャプション名
-	LPCTSTR WINDOW_NAME = _T("シューティングゲーム");
+	LPCTSTR WINDOW_NAME = _T("Zombie Survivor");
 }
 
 // スクリーンの幅

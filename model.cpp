@@ -96,13 +96,13 @@ void CModel::Uninit(void)
 //============================================
 void CModel::Update(void)
 {
-	for (int nCnt = 0; nCnt < NUMBER_OF_MODELS; nCnt++)
+	/*for (int nCnt = 0; nCnt < NUMBER_OF_MODELS; nCnt++)
 	{
 		if (m_apModel[nCnt])
 		{
 			m_apModel[nCnt]->Update();
 		}
-	}
+	}*/
 }
 
 //============================================

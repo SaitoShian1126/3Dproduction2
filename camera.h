@@ -34,10 +34,11 @@ public:
 	void Uninit(void);		//カメラの終了処理
 	void Update(void);		//カメラの更新処理
 
-	void SetCamera();		//カメラの設定処理
-	void SetRot(D3DXVECTOR3 rot) { m_Rot = rot; }
-	void SetDistance(float distance) { m_fDistance = distance; }
-	void SetOffset(D3DXVECTOR3 posV, D3DXVECTOR3 posR);
+	void SetCamera();												//カメラの設定処理
+	void SetRot(D3DXVECTOR3 rot) { m_Rot = rot; }					//カメラの回転の設定処理
+	void SetDistance(float distance) { m_fDistance = distance; }	//カメラの距離処理
+	void SetOffset(D3DXVECTOR3 posV, D3DXVECTOR3 posR);				//カメラの距離の設定処理
+	void SetShakeCamera(int QuakeFrame, int QuakeMagnitude);		//カメラの揺れの設定処理
 
 	D3DXVECTOR3 GetPosV() { return m_PosVDest; }
 	D3DXVECTOR3 GetPosR() { return m_PosRDest; }
@@ -61,6 +62,9 @@ private:
 	D3DXMATRIX m_mtxProjection;		//プロジェクションマトリックス
 	D3DXMATRIX m_mtxView;			//ビューマトリックス
 	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
+
+	int m_nQuakeFrameCount;			//揺らすフレーム数
+	int m_fQuakeMagnitude;			//揺れの量
 
 	float m_fDistance;				//視点から注視点の距離		
 };

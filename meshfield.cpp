@@ -421,6 +421,7 @@ void CMeshField::GetMeshFieldCollision(D3DXVECTOR3 *PlayerPos)
 	D3DXVECTOR3 Calculation3D[2];		//3次元外積の計算結果
 	float Calculation2D[3];				//2次元外積の計算結果
 	D3DXVECTOR3 Answer;					//外積の計算結果
+	D3DXVECTOR3 PlayerDist;				//プレイヤーと頂点の距離
 
 	//頂点バッファをロック
 	m_pVtxBuffMeshField->Lock(0, 0, (void**)&pVtx, 0);
@@ -434,8 +435,18 @@ void CMeshField::GetMeshFieldCollision(D3DXVECTOR3 *PlayerPos)
 		IdxPos[1] = pVtx[pIdx[nCnt + 1]].pos;
 		IdxPos[2] = pVtx[pIdx[nCnt + 2]].pos;
 
+		//プレイヤーと頂点の距離の計算
+		PlayerDist = *PlayerPos - IdxPos[0];
+		D3DXVec3Length(&PlayerDist);
+
 		//縮退ポリゴンの判定を無視する処理
 		if (IdxPos[0] == IdxPos[1] || IdxPos[1] == IdxPos[2] || IdxPos[2] == IdxPos[0])
+		{
+			continue;
+		}
+		
+		//距離が30.0f以下だったら最初から
+		if (30.0f <= D3DXVec3Length(&PlayerDist))
 		{
 			continue;
 		}
@@ -468,6 +479,7 @@ void CMeshField::GetMeshFieldCollision(D3DXVECTOR3 *PlayerPos)
 
 			//内積の計算
 			PlayerPos->y = (IdxPos[0].y + m_pos.y) - ((PlayerPos->x - (IdxPos[0].x + m_pos.x)) * Answer.x + (PlayerPos->z - (IdxPos[0].z + m_pos.z)) * Answer.z) / Answer.y;
+			break;
 		}
 	}
 	//頂点バッファをアンロック

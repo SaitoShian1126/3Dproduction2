@@ -29,6 +29,12 @@
 class CNumber : public CObject2D
 {
 public:
+	enum NUMBERTYPE
+	{
+		NUMBERTYPE_SCORE = 0,			//スコア
+		NUMBERTYPE_BOMB,				//爆弾の個数
+		NUMBERTYPE_MAX
+	};
 	CNumber();							//コンストラクタ
 	~CNumber()override;					//デストラクタ
 
@@ -39,10 +45,14 @@ public:
 
 	static HRESULT Load(void);			//テクスチャの読み込み
 	static void Unload(void);			//テクスチャの破棄
-	static CNumber *Create(const D3DXVECTOR3 &pos, D3DXVECTOR3 size);	//生成
+	static CNumber *Create(const D3DXVECTOR3 &pos, D3DXVECTOR3 size, NUMBERTYPE type);	//生成
+
+	NUMBERTYPE GetType(void) { return m_type; }			//ナンバーの種類の取得
+	void SetType(NUMBERTYPE type) { m_type = type; }	//ナンバーの種類の設定
 
 private:
 	static LPDIRECT3DTEXTURE9 m_pTextureNumber;		//テクスチャへのポインタ
+	NUMBERTYPE m_type;								//ナンバーの種類
 };
 
 #endif

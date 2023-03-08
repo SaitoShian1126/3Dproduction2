@@ -15,6 +15,7 @@
 #include "object2D.h"
 #include "fade.h"
 #include "result.h"
+#include "sound.h"
 
 //静的メンバ変数宣言
 CNumber *CRanking::m_pNumber[MAX_RANKINGRANK][SCORE_DIGIT] = {};
@@ -54,6 +55,7 @@ HRESULT CRanking::Init(void)
 	//********************************
 	//メンバ変数の初期化
 	//********************************
+	m_BGMFlag = false;
 
 	m_pObject[0] = CObject2D::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 	m_pObject[0]->SetSize(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
@@ -63,7 +65,7 @@ HRESULT CRanking::Init(void)
 	{
 		for (int nCnt = 0; nCnt < SCORE_DIGIT; nCnt++)
 		{
-			m_pNumber[nCntRanking][nCnt] = CNumber::Create(D3DXVECTOR3(425.0f + 90.0f * nCnt, 260.0f + 75.0f * nCntRanking, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 0.0f));
+			m_pNumber[nCntRanking][nCnt] = CNumber::Create(D3DXVECTOR3(425.0f + 90.0f * nCnt, 260.0f + 75.0f * nCntRanking, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 0.0f),CNumber::NUMBERTYPE_SCORE);
 			m_pNumber[nCntRanking][nCnt]->BindTexture(m_pTextureRanking[1]);
 		}
 	}
@@ -75,6 +77,9 @@ HRESULT CRanking::Init(void)
 //ランキングの終了処理
 void CRanking::Uninit(void)
 {
+	//サウンドの停止
+	StopSound();
+
 	CObject::Release();
 
 	for (int nCntRanking = 0; nCntRanking < 5; nCntRanking++)
@@ -94,11 +99,22 @@ void CRanking::Update()
 {
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
+	CJoyPad *pJoyPad = CApplication::GetJpyPad();
 
-	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_RANKING)
+	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true || pJoyPad->GetJoypadTrigger(pJoyPad->JOYKEY_B) && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_RANKING)
 	{
+		PlaySound(SOUND_LABEL_SE_BUTTOM);
 		SaveRanking();
 		CFade::SetFade(CApplication::MODE_TITLE);
+	}
+
+	//============================================
+	// サウンドの再生
+	//============================================
+	if (m_BGMFlag == false)
+	{
+		PlaySound(SOUND_LABEL_RANKING);
+		m_BGMFlag = true;
 	}
 }
 

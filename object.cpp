@@ -111,7 +111,7 @@ void CObject::UpdateAll(void)
 		{
 			//pNext‚Ì•Û‘¶
 			CObject *pObjectNext = pObject->m_pNext;
-
+			
 			if (pObject->m_bDeath == false)
 			{
 				if (pObject->GetObjType() == OBJTYPE_PAUSE)

@@ -20,7 +20,6 @@
 //============================================
 // マクロ定義
 //============================================
-#define MAX_PARTICLE	(4096)		//パーティクルの最大数
 
 //============================================
 // オブジェクト基礎クラス
@@ -36,24 +35,23 @@ public:
 	void Update(void)override;						//オブジェクト基礎更新処理
 	void Draw(void)override;						//オブジェクト基礎描画処理
 
-	//void SetParticle(D3DXVECTOR3 pos);
-
 	CObjectBase *SetTexture(char *pFile);			//テクスチャの設定
 	void SetTextureY(float SplitX, float nNumIndexX, float SplitY, float nNumIndexY);	//縦のテクスチャの設定
 
-	void SetPosition(D3DXVECTOR3 pos)override;									//オブジェクト基礎位置
-	void SetMove(D3DXVECTOR3 move)override;										//オブジェクト基礎移動
-	void SetRot(D3DXVECTOR3 rot) { rot; }										//回転
-	void SetSize(D3DXVECTOR3 size);												//オブジェクト基礎サイズ
-	void SetLength(float length) { length; }									//拡大縮小のスケール
-	void BindTexture(LPDIRECT3DTEXTURE9 pTexture) { pTexture; }					//テクスチャ反映
-	float GetLength(void) override { return m_fLength; }						//拡大縮小のスケールの取得
+	void SetPosition(D3DXVECTOR3 pos)override;											//オブジェクト基礎位置
+	void SetMove(D3DXVECTOR3 move)override;												//オブジェクト基礎移動
+	void SetRot(D3DXVECTOR3 rot) { rot; }												//回転
+	void SetSize(D3DXVECTOR3 size);														//オブジェクト基礎サイズ
+	void SetLength(float length) { length; }											//拡大縮小のスケール
+	void SetCol(D3DXCOLOR col) { m_ObjectBaseCol = col; }
+	void BindTexture(LPDIRECT3DTEXTURE9 pTexture) { m_pTextureObjectBase =pTexture; }	//テクスチャ反映
+	float GetLength(void) override { return m_fLength; }								//拡大縮小のスケールの取得
 
-	LPDIRECT3DVERTEXBUFFER9 GetBuffer() { return m_pVtxBuffObjectBase; }		//バッファーの取得
-	D3DXVECTOR3 GetPos(void) override { return m_ObjectBasePos; }				//位置の取得
-	D3DXVECTOR3 GetMove(void) override { return m_ObjectBaseMove; }				//移動量の取得
-	D3DXVECTOR3 GetSize(void) override { return m_ObjectBaseSize; }				//サイズの取得
-	D3DXVECTOR3 GetRot(void) override { return m_ObjectBaseRot; }				//回転の取得
+	LPDIRECT3DVERTEXBUFFER9 GetBuffer() { return m_pVtxBuffObjectBase; }				//バッファーの取得
+	D3DXVECTOR3 GetPos(void) override { return m_ObjectBasePos; }						//位置の取得
+	D3DXVECTOR3 GetMove(void) override { return m_ObjectBaseMove; }						//移動量の取得
+	D3DXVECTOR3 GetSize(void) override { return m_ObjectBaseSize; }						//サイズの取得
+	D3DXVECTOR3 GetRot(void) override { return m_ObjectBaseRot; }						//回転の取得
 
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuffObjectBase;		//頂点バッファへのポインタ

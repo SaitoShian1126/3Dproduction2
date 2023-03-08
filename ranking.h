@@ -47,6 +47,8 @@ private:
 	LPDIRECT3DTEXTURE9 m_pTextureRanking[2] = {};				//テクスチャへのポインタ
 	CObject2D *m_pObject[2];									//オブジェクトのポインタ
 	CFade *m_pFade;												//フェード
+
+	bool m_BGMFlag;							//BGMフラグ
 };
 
 #endif

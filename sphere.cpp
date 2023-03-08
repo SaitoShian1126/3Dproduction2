@@ -71,7 +71,7 @@ void CSphere::Update(void)
 {
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
-	CMeshField *pMeshField = CGame::GetMeshField();
+//	CMeshField *pMeshField = CGame::GetMeshField();
 	D3DXVECTOR3 CameraRot = CCamera::GetCameraRot();
 	D3DXVECTOR3 SpherePos = GetPos();
 	D3DXVECTOR3 SphereRot = GetRot();
@@ -176,7 +176,7 @@ void CSphere::Update(void)
 		SphereRot.y = SphereRot.y + D3DX_PI * 2;
 	}
 
-	pMeshField->GetMeshFieldCollision(&SpherePos);
+//	pMeshField->GetMeshFieldCollision(&SpherePos);
 	SetPosition(SpherePos);
 	SetRot(SphereRot);
 }

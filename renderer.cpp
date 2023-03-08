@@ -96,24 +96,24 @@ HRESULT CRenderer::Init(HWND hWnd, bool bWindow)
 	m_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	m_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	////フォグの有効設定
-	//m_pD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
+	//フォグの有効設定
+	m_pD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
 
-	////フォグカラー
-	//m_pD3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	//フォグカラー
+	m_pD3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 
-	////フォグのモード(範囲指定:D3DFOG_LINEAR,密度指定:D3DFOG_EXP)
-	//m_pD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_EXP);
+	//フォグのモード(範囲指定:D3DFOG_LINEAR,密度指定:D3DFOG_EXP)
+	m_pD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_EXP);
 
-	//////範囲指定(※LINEAR時に指定)
-	////int fFogStartPos = 100;
-	////int fFogEndPos = 1000;
-	////m_pD3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&fFogStartPos));
-	////m_pD3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&fFogEndPos));
+	////範囲指定(※LINEAR時に指定)
+	//int fFogStartPos = 100;
+	//int fFogEndPos = 1000;
+	//m_pD3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&fFogStartPos));
+	//m_pD3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&fFogEndPos));
 
-	////密度指定(※EXP時に指定)
-	//float fFogDensity = 0.004f;
-	//m_pD3DDevice->SetRenderState(D3DRS_FOGDENSITY, *(DWORD*)(&fFogDensity));
+	//密度指定(※EXP時に指定)
+	float fFogDensity = 0.001f;
+	m_pD3DDevice->SetRenderState(D3DRS_FOGDENSITY, *(DWORD*)(&fFogDensity));
 
 	// サンプラーステートの設定
 	m_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -158,17 +158,18 @@ void CRenderer::Update(void)
 {
 	// インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
+
 	//============================================
 	//	ワイヤーフレーム
 	//============================================
 	//F1キーでワイヤーフレームを表示
-	if (pInput->GetKeyboardTrigger(DIK_F1) == true)
+	if (pInput->GetKeyboardPress(DIK_F1) == true)
 	{//F1キーが押された
 	 //ワイヤーフレームモードの設定
 		m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	}
 	//F1キーを放したらワイヤーフレーム非表示
-	else if (pInput->GetKeyboardTrigger(DIK_F2) == true)
+	else if (pInput->GetKeyboardPress(DIK_F1) == false)
 	{
 		//ワイヤーフレームモードの設定
 		m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_FORCE_DWORD);
@@ -185,9 +186,6 @@ void CRenderer::Draw(void)
 {
 	//GetDeviveの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
-	//ビューポートの設定
-	D3DVIEWPORT9 viewport;		//ビューポート
-	pDevice->GetViewport(&viewport);
 
 	CApplication::GetCamera()->SetCamera();
 
@@ -216,7 +214,6 @@ void CRenderer::Draw(void)
 		// Direct3Dによる描画の終了
 		m_pD3DDevice->EndScene();
 	}
-	pDevice->SetViewport(&viewport);
 
 	// バックバッファとフロントバッファの入れ替え
 	m_pD3DDevice->Present(NULL, NULL, NULL, NULL);

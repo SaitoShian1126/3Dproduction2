@@ -54,7 +54,7 @@ HRESULT CObject3D::Init(void)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//移動の初期化
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//回転の初期化
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);									//色の初期化
-	m_size = D3DXVECTOR3(100.0f, 0.0f, 100.0f);									//サイズ
+	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);										//サイズ
 	m_fWidth = 25.0f;															//幅の初期化
 	m_fHeight = 25.0f;															//高さの初期化
 	m_fLength = sqrtf(((m_fWidth * m_fWidth) + (m_fHeight * m_fHeight))) / 2;	//拡大縮小のスケールの初期化
@@ -84,10 +84,10 @@ HRESULT CObject3D::Init(void)
 	m_pVtxBuffMeshPolygon->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定(ワールド座標ではなくローカル座標を設定)
-	pVtx[0].pos = D3DXVECTOR3(m_pos.x - 100.0f, m_pos.y + 0.0f, 100.0f);
-	pVtx[1].pos = D3DXVECTOR3(m_pos.x + 100.0f, m_pos.y + 0.0f, 100.0f);
-	pVtx[2].pos = D3DXVECTOR3(m_pos.x - 100.0f, m_pos.y - 0.0f, -100.0f);
-	pVtx[3].pos = D3DXVECTOR3(m_pos.x + 100.0f, m_pos.y - 0.0f, -100.0f);
+	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y + m_size.y, m_size.z);
+	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y + m_size.y, m_size.z);
+	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y - m_size.y, -m_size.z);
+	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y - m_size.y, -m_size.z);
 
 	//各頂点の法線の設定(※ベクトルの大きさは1にする必要がある)
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -141,19 +141,8 @@ void CObject3D::Uninit(void)
 //============================================
 void CObject3D::Update(void)
 {
-	VERTEX_3D*pVtx;		//頂点情報へのポインタ
-
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuffMeshPolygon->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点情報の更新
-	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y - m_size.y, m_pos.z + m_size.z);
-	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y - m_size.y, m_pos.z + m_size.z);
-	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_size.x, m_pos.y + m_size.y, m_pos.z - m_size.z);
-	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_size.x, m_pos.y + m_size.y, m_pos.z - m_size.z);
-
-	//頂点バッファをアンロックする
-	m_pVtxBuffMeshPolygon->Unlock();
+	SetPosition(m_pos);
+	SetSize(m_size);
 }
 
 //============================================
@@ -325,7 +314,8 @@ CObject3D *CObject3D::Create(const D3DXVECTOR3 &pos)
 		pObject3D->Init();
 		//設定処理
 		pObject3D->SetPosition(pos);
-		pObject3D->SetSize(D3DXVECTOR3(100.0f, 0.0f, 100.0f));
+		pObject3D->SetSize(D3DXVECTOR3(100.0f, 0.5f, 100.0f));
+		pObject3D->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 	else
 	{

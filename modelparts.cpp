@@ -82,6 +82,22 @@ void CModelParts::Uninit(void)
 		m_pBuffMat->Release();
 		m_pBuffMat = nullptr;
 	}
+
+	////テクスチャの破棄
+	//for (int nCnt = 0; nCnt < (int)m_pNumMat; nCnt++)
+	//{
+	//	if (m_pTexture[nCnt] != nullptr)
+	//	{
+	//		m_pTexture[nCnt]->Release();
+	//		m_pTexture[nCnt] = nullptr;
+	//	}
+	//}
+
+	//if (m_pTexture != nullptr)
+	//{
+	//	delete[] m_pTexture;
+	//	m_pTexture = nullptr;
+	//}
 }
 
 //============================================
@@ -150,11 +166,17 @@ void CModelParts::DrawFile(void)
 		//マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
+		// テクスチャの設定
+		//pDevice->SetTexture(0, m_pTexture[nCntMat]);
+
 		//モデルパーツの描画
 		m_pMesh->DrawSubset(nCntMat);
 	}
 	//保持していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef); 
+
+	//テクスチャの解除
+	pDevice->SetTexture(0, NULL);
 }
 
 //============================================
@@ -275,7 +297,7 @@ CModelParts * CModelParts::Create(const D3DXVECTOR3 pos, const D3DXVECTOR3 rot)
 //============================================
 void CModelParts::SetModel(char * pFile)
 {
-	//GetDeviveの取得
+	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
 
 	//Xファイルの読み込み
@@ -287,6 +309,27 @@ void CModelParts::SetModel(char * pFile)
 		NULL,
 		&m_pNumMat,
 		&m_pMesh);
+
+	//// テクスチャ
+	//m_pTexture = new LPDIRECT3DTEXTURE9[m_pNumMat];
+
+	////情報が入ってなかったら
+	//assert(m_pTexture != nullptr);
+
+	//// バッファの先頭ポインタをD3DXMATERIALにキャストして取得
+	//D3DXMATERIAL *pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+
+	//// 各メッシュのマテリアル情報を取得する
+	//for (int nCntMat = 0; nCntMat < (int)m_pNumMat; nCntMat++)
+	//{
+	//	//情報の初期化
+	//	m_pTexture[nCntMat] = nullptr;
+
+	//	//ポリゴンに貼り付けるテクスチャの読み込み
+	//	D3DXCreateTextureFromFile(pDevice,
+	//		pMat[nCntMat].pTextureFilename,
+	//		&m_pTexture[nCntMat]);
+	//}
 }
 
 //============================================

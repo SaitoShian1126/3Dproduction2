@@ -8,6 +8,7 @@
 //============================================
 // インクルード
 //============================================
+#include <time.h>
 #include <math.h>
 #include <assert.h>
 #include "camera.h"
@@ -51,6 +52,12 @@ HRESULT CCamera::Init(void)
 	//============================================
 	//メンバ変数の初期化
 	//============================================
+
+	//乱数
+	srand((unsigned int)time(nullptr));			//起動時に一回だけ行うため初期化に書く
+	m_nQuakeFrameCount = 0;
+	m_fQuakeMagnitude = 0;
+
 	m_Rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_PosV = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -139,12 +146,12 @@ void CCamera::Update()
 	// カメラの向いてる方向に移動できる処理
 	//============================================
 	m_Rot.y = atan2(m_PosR.x - m_PosV.x,m_PosR.z - m_PosV.z);
-	
+
 	//============================================
 	// デバック表示
 	//============================================
-	CDebugProc::Print("カメラの視点 : %.3f,%.3f,%.3f\n", m_PosVDest.x, m_PosVDest.y, m_PosVDest.z);
-	CDebugProc::Print("カメラの注視点 : %.3f,%.3f,%.3f\n", m_PosRDest.x, m_PosRDest.y, m_PosRDest.z);
+	/*CDebugProc::Print("カメラの視点 : %.3f,%.3f,%.3f\n", m_PosVDest.x, m_PosVDest.y, m_PosVDest.z);
+	CDebugProc::Print("カメラの注視点 : %.3f,%.3f,%.3f\n", m_PosRDest.x, m_PosRDest.y, m_PosRDest.z);*/
 }
 
 //============================================
@@ -152,32 +159,45 @@ void CCamera::Update()
 //============================================
 void CCamera::SetCamera()
 {
-	//デバイスへのポインタ
+	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
 
-	//ビューマトリックスの初期化
+	D3DXVECTOR3 adjustPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	if (m_nQuakeFrameCount > 0)
+	{
+		m_nQuakeFrameCount--;
+		////乱数で揺れの大きさを変える
+		adjustPos.x = (float)(rand() % (int)(m_fQuakeMagnitude * 200) / 100) - m_fQuakeMagnitude;
+		adjustPos.y = (float)(rand() % (int)(m_fQuakeMagnitude * 200) / 100) - m_fQuakeMagnitude;
+		adjustPos.z = (float)(rand() % (int)(m_fQuakeMagnitude * 200) / 100) - m_fQuakeMagnitude;
+	}
+	//ビューマトリックの初期化
 	D3DXMatrixIdentity(&m_mtxView);
 
-	//ビューマトリックスの作成
+	//ビューマトリックの生成
+	D3DXVECTOR3 PosV = (adjustPos + m_PosV);
+	D3DXVECTOR3 PosR = (adjustPos + m_PosR);
+
 	D3DXMatrixLookAtLH(&m_mtxView,
-		&m_PosV,
-		&m_PosR,
+		&PosV,
+		&PosR,
 		&m_VecU);
 
-	//ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
 
-	//プロジェクションマトリックスの初期化
+	//プロジェクションマトリックの初期化
 	D3DXMatrixIdentity(&m_mtxProjection);
 
-	//プロジェクションマトリックスの作成
+	//プロジェクションマトリックの作成
 	D3DXMatrixPerspectiveFovLH(&m_mtxProjection,
-		D3DXToRadian(45.0f),										//視野角
-		(float)m_Viewport.Width / (float)m_Viewport.Height,			//アスペクト比
-		1.0f,														//どこから(ニア)どこまで(ファー)をカメラで
-		1000.0f);													//表示するか設定
 
-	//プロジェクションマトリックスの設定
+		D3DXToRadian(45.0f),									//視野角
+		(float)m_Viewport.Width / (float)m_Viewport.Height,		//アスペクト比
+		10.0f,													//ニア
+		5000.0f);												//ファー
+
+	//プロジェクションマトリックの設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);
 }
 
@@ -188,4 +208,13 @@ void CCamera::SetOffset(D3DXVECTOR3 posV, D3DXVECTOR3 posR)
 {
 	m_OffsetV = posV;
 	m_OffsetR = posR;
+}
+
+//============================================
+// 揺れの設定
+//============================================
+void CCamera::SetShakeCamera(int QuakeFrame, int QuakeMagnitude)
+{
+	m_nQuakeFrameCount = QuakeFrame;
+	m_fQuakeMagnitude = QuakeMagnitude;
 }

@@ -14,6 +14,7 @@
 #include "object3d.h"
 #include "object.h"
 #include "application.h"
+#include "sound.h"
 
 //*****************************************************************************
 // グローバル変数
@@ -69,10 +70,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	pApplication = new CApplication;
 
 	// 初期化処理
-	if (FAILED(pApplication->Init(hInstance, hWnd, TRUE)))    //画面サイズ
+	if (FAILED(pApplication->Init(hInstance, hWnd, true)))    //画面サイズ
 	{//初期化処理が失敗した場合
 		return -1;
 	}
+
+	//サウンドの初期化処理
+	InitSound(hWnd);
 
 	// 分解能を設定
 	timeBeginPeriod(1);
@@ -148,6 +152,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		delete pApplication;
 		pApplication = nullptr;
 	}
+
+	//サウンドの終了処理
+	UninitSound();
 
 	// ウィンドウクラスの登録を解除
 	UnregisterClass(CLASS_NAME, wcex.hInstance);

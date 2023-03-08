@@ -31,6 +31,9 @@ CExplosion::CExplosion()
 	//============================================
 	//メンバ変数のクリア
 	//============================================
+	m_nCounterAnimExplosion = 0;						//カウントアニメーションのクリア
+	m_nPatternAnimExplosion = 0;						//パターンアニメーションのクリア
+	m_nPatternAnimExplosionY = 0;						//Yパターンアニメーションのクリア
 }
 
 //============================================
@@ -39,6 +42,7 @@ CExplosion::CExplosion()
 CExplosion::~CExplosion()
 {
 }
+
 //============================================
 // 爆発の初期化処理
 //============================================
@@ -55,6 +59,7 @@ HRESULT CExplosion::Init(void)
 	CObjectBase::Init();
 
 	SetTexture("data/TEXTURE/爆発.png");
+	SetTextureY(8.0f, 0.0f, 2.0f, 0.0f);
 
 	return S_OK;
 }
@@ -73,11 +78,11 @@ void CExplosion::Uninit(void)
 //============================================
 void CExplosion::Update(void)
 {
-	//*******************************************
+	//============================================
 	//	爆発のアニメーション
-	//*******************************************
+	//============================================
 	//objectbaseの更新処理関数呼び出し
-	//CObjectBase::Update();
+	CObjectBase::Update();
 
 	//アニメーションカウンターをインクリメント
 	m_nCounterAnimExplosion++;

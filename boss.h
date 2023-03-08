@@ -22,8 +22,8 @@
 //============================================
 #define BOSS_MOVE			(1.0f)		//ボスの移動
 #define MAX_BOSS_WORD		(512)		//ワード数
-#define MODEL_BOSS_PARTS	(15)		//モデルのパーツ数
-#define MOTION_BOSS_NUMBER	(2)			//モーション数
+#define MODEL_BOSS_PARTS	(21)		//モデルのパーツ数
+#define MOTION_BOSS_NUMBER	(1)			//モーション数
 
 //============================================
 // 前方宣言
@@ -33,6 +33,7 @@ class CModelParts;
 class CMotionSet;
 class CKeySet;
 class CKey;
+class CBullet;
 
 //============================================
 // ボスクラス
@@ -59,6 +60,9 @@ public:
 	void Draw(void)override;						//ボスの描画処理
 
 	void LoadBoss();								//ボスの読み込み
+	void Vtx(void);									//最大最小
+	void BossRot();									//ボスの向き
+	void BossAttack();								//ボスの攻撃処理
 
 	static D3DXVECTOR3 GetBossPos(void) { return m_pos; }		//ボスの位置取得
 	static D3DXVECTOR3 GetBossSize(void) { return m_size; }		//ボスのサイズ取得
@@ -71,6 +75,8 @@ public:
 	void SetLength(float length);			//長さの設定処理
 	void SetLife(int life);					//体力の設定処理
 	void SetMotionType(MOTIONTYPE type);	//モーションの種類の設定処理
+	void SetBossDeathFlag(bool flag);		//ボスが死んだのかの設定処理
+	static void SetBullet(CBullet *bullet) { m_pBullet = bullet; }
 
 	D3DXVECTOR3 GetPos(void);				//位置の取得処理
 	D3DXVECTOR3 GetMove(void);				//移動量の取得
@@ -78,6 +84,8 @@ public:
 	D3DXVECTOR3 GetRot(void);				//回転の取得
 	float GetLength(void);					//拡大縮小のスケールの取得
 	int GetLife(void);						//体力の取得処理
+	bool GetBossDethFlag(void);				//ボスが死んだのかフラグ
+	static CBullet *GetBullet(void) { return m_pBullet; }
 
 private:
 	//============================================
@@ -92,6 +100,7 @@ private:
 	CMotionSet *m_MotionSet[MOTION_BOSS_NUMBER];	//モーションセット
 	CKeySet *m_KeySet;								//キーセット
 	CKey *m_Key;									//キー
+	static CBullet *m_pBullet;						//弾のインスタンス
 	D3DXVECTOR3 m_posOld;							//目的の位置
 	D3DXVECTOR3 m_rotDest;							//目的の向き
 	D3DXVECTOR3 m_FrameSpeed[MODEL_BOSS_PARTS];		//フレームの速さ
@@ -107,9 +116,17 @@ private:
 	int m_PresentKeySet;							//現在のキーセット
 	int m_nLife;									//体力
 	int m_nCountModel;								//モデル数のカウント
+	int m_RandCount;								//ランダムカウント
+	int m_EnemyCount;								//敵のカウント
+	int m_BulletCount;								//弾のカウント
+
 	float m_PlayerHeightPos;						//ボスの高さの位置
 	float m_Length;									//長さ
 	float m_Angle;									//角度
+
+	bool m_MotionFlag;								//モーションフラグ
+	bool m_RandFlag;								//ランダムフラグ
+	bool m_BossDeathFlag;							//ボスが死んだのかフラグ
 };
 
 #endif

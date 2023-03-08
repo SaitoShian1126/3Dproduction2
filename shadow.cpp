@@ -18,7 +18,6 @@
 //============================================
 // 静的メンバ変数宣言
 //============================================
-D3DXVECTOR3 CShadow::m_pos = {};
 
 //============================================
 // 影のコンストラクタ
@@ -134,7 +133,7 @@ CShadow * CShadow::Create(const D3DXVECTOR3 & pos)
 		pShadow->Init();
 		//設定処理
 		pShadow->SetPosition(pos);
-		pShadow->SetSize(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		pShadow->SetSize(D3DXVECTOR3(100.0f, 1.0f, 100.0f));
 	}
 	else
 	{

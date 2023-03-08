@@ -14,6 +14,9 @@
 #include "bullet.h"
 #include "explosion.h"
 #include "game.h"
+#include "spawn.h"
+#include "enemy.h"
+#include "score.h"
 
 //============================================
 // 静的メンバ変数宣言
@@ -48,11 +51,11 @@ HRESULT CGasolene_Gimmick::Init(void)
 	//メンバ変数の初期化
 	//============================================
 	m_size = D3DXVECTOR3(30.0f, 30.0f, 30.0f);
-	m_nLife = 10;
+	m_nLife = 1;
 
 	//オブジェクト基礎の初期化処理
-	CObjectX::Init();
-	CObjectX::SetModel("data/XMODEL/gasolene.x");
+	CGimmick::Init();
+	CGimmick::SetModel("data/XMODEL/gasolene.x");
 
 	return S_OK;
 }
@@ -63,7 +66,7 @@ HRESULT CGasolene_Gimmick::Init(void)
 void CGasolene_Gimmick::Uninit(void)
 {
 	//オブジェクト基礎の終了処理
-	CObjectX::Uninit();
+	CGimmick::Uninit();
 }
 
 //============================================
@@ -71,19 +74,8 @@ void CGasolene_Gimmick::Uninit(void)
 //============================================
 void CGasolene_Gimmick::Update(void)
 {
-	if (m_nLife <= 0)
-	{
-		CExplosion::Create(D3DXVECTOR3(m_pos.x,m_pos.y + 20.0f,m_pos.z), D3DXVECTOR3(50.0f, 50.0f, 0.0f));
-		CPlayer::GetBullet()->SetGimmickUninitFlag(true);
-		Uninit();
-		return;
-	}
-
 	//オブジェクト基礎の更新処理
-	CObjectX::Update();
-
-	//位置の設定
-	SetPosition(m_pos);
+	CGimmick::Update();
 }
 
 //============================================
@@ -92,7 +84,7 @@ void CGasolene_Gimmick::Update(void)
 void CGasolene_Gimmick::Draw(void)
 {
 	//オブジェクト基礎の描画処理
-	CObjectX::Draw();
+	CGimmick::Draw();
 }
 
 //============================================
@@ -100,7 +92,40 @@ void CGasolene_Gimmick::Draw(void)
 //============================================
 void CGasolene_Gimmick::HitDamage()
 {
-	
+	CObject *pObject = GetTop(PRIORITY_LEVEL0);
+	D3DXVECTOR3 GasolinePos = CGimmick::GetPos();
+
+	while (pObject != nullptr)
+	{
+		//pNextの保存
+		CObject *pObjectNext = pObject->GetNext();
+		if (pObject->GetObjType() == OBJTYPE_ENEMY)
+		{
+			CEnemy* pEnemy = (CEnemy*)pObject;
+			//敵の位置の取得
+			D3DXVECTOR3 EnemyPos = pEnemy->GetEnemyPos();
+			D3DXVECTOR3 EnemySize = pEnemy->GetEnemySize();
+			int EnemyLife = pEnemy->GetLife();
+
+			if (GasolinePos.x + 100.0f >= EnemyPos.x - EnemySize.x / 2 && GasolinePos.x - 100.0f <= EnemyPos.x + EnemySize.x / 2
+				&& EnemyPos.z - EnemySize.z / 2 <= GasolinePos.z + 100.0f && EnemyPos.z + EnemySize.z / 2 >= GasolinePos.z - 100.0f)
+			{
+				EnemyLife--;
+				if (EnemyLife <= 0)
+				{
+					CGame::GetScore()->AddScore(300);
+					pEnemy->Uninit();
+					pEnemy = nullptr;
+				}
+				else
+				{
+					pEnemy->SetLife(EnemyLife);
+				}
+			}
+		}
+		//pObjectにpObjectのpNextを代入
+		pObject = pObjectNext;
+	}
 }
 
 //============================================

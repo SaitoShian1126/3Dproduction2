@@ -33,6 +33,7 @@ public:
 		OBJTYPE_NONE = 0,
 		OBJTYPE_PAUSE,		//ポーズ
 		OBJTYPE_PLAYER,		//プレイヤー
+		OBJTYPE_ENEMY,		//敵
 		OBJTYPE_BG,			//背景
 		OBJTYPE_EFFECT,		//エフェクト
 		OBJTYPE_MESH,		//メッシュ

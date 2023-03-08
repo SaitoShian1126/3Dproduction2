@@ -14,6 +14,7 @@
 #include "renderer.h" 
 #include "input.h"
 #include "fade.h"
+#include "sound.h"
 
 //============================================
 // 静的メンバ変数宣言
@@ -60,6 +61,7 @@ HRESULT CResult::Init(void)
 	//============================================
 	//メンバ変数の初期化
 	//============================================
+	m_BGMFlag = false;
 
 	m_pObject = CObject2D::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 	m_pObject->SetSize(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
@@ -84,6 +86,9 @@ HRESULT CResult::Init(void)
 //============================================
 void CResult::Uninit(void)
 {
+	//サウンドの停止
+	StopSound();
+
 	CObject::Release();
 }
 
@@ -94,10 +99,30 @@ void CResult::Update()
 {
 	//インプットのインスタンス生成
 	CInput *pInput = CApplication::GetInput();
+	CJoyPad *pJoyPad = CApplication::GetJpyPad();
 
-	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_RESULT)
+	if (pInput->GetKeyboardTrigger(DIK_RETURN) == true ||  pJoyPad->GetJoypadTrigger(pJoyPad->JOYKEY_B) && m_pFade->GetFade() == CFade::FADETYPE_NONE && CApplication::GetModeType() == CApplication::MODE_RESULT)
 	{
+		PlaySound(SOUND_LABEL_SE_BUTTOM);
 		CFade::SetFade(CApplication::MODE_RANKING);
+	}
+
+	//============================================
+	// サウンドの再生
+	//============================================
+	if (m_BGMFlag == false && m_TypeNumber == CResult::TYPE_GAMECLEAR)
+	{
+		PlaySound(SOUND_LABEL_GAMECLEAR);
+		m_BGMFlag = true;
+	}
+
+	//============================================
+	// サウンドの再生
+	//============================================
+	if (m_BGMFlag == false && m_TypeNumber == CResult::TYPE_GAMEOVER)
+	{
+		PlaySound(SOUND_LABEL_GAMEOVER);
+		m_BGMFlag = true;
 	}
 }
 

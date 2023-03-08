@@ -20,7 +20,6 @@
 //============================================
 // 静的メンバ変数宣言
 //============================================
-D3DXVECTOR3 CBillboard::m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 //============================================
 // ビルボードのコンストラクタ
@@ -46,6 +45,7 @@ HRESULT CBillboard::Init(void)
 	//============================================
 	//メンバ変数の初期化
 	//============================================
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//オブジェクト基礎の初期化処理
 	CObjectBase::Init();
@@ -91,17 +91,17 @@ CBillboard * CBillboard::Create()
 	CBillboard *pBillboard = nullptr;
 
 	//ビルボードの生成
-	pBillboard = new CBillboard;				//ビルボードのインスタンス生成
+	pBillboard = new CBillboard;		//ビルボードのインスタンス生成
 
 	//nullチェック
 	if (pBillboard != nullptr)
 	{
-		//初期化処理
-		pBillboard->Init();
+		pBillboard->Init();				//初期化処理
 	}
 	else
 	{
 		assert(false);
 	}
+
 	return pBillboard;
 }

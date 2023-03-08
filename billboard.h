@@ -36,12 +36,12 @@ public:
 	void Update(void)override;						//ビルボードの更新処理
 	void Draw(void)override;						//ビルボードの描画処理
 
-	static void SetBillboardPos(D3DXVECTOR3 pos) { m_pos = pos; }	//ビルボードの位置設定
-	static D3DXVECTOR3 GetBillboardPos(void) { return m_pos; }		//ビルボードの位置取得
-	static CBillboard *Create();			//生成
+	void SetBillboardPos(D3DXVECTOR3 pos) { m_pos = pos; }	//ビルボードの位置設定
+	D3DXVECTOR3 GetBillboardPos(void) { return m_pos; }		//ビルボードの位置取得
+	static CBillboard *Create();							//生成
 
 private:
-	static D3DXVECTOR3 m_pos;				//位置
+	D3DXVECTOR3 m_pos;				//位置
 };
 
 #endif
