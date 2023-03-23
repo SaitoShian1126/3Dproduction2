@@ -150,8 +150,8 @@ void CCamera::Update()
 	//============================================
 	// デバック表示
 	//============================================
-	/*CDebugProc::Print("カメラの視点 : %.3f,%.3f,%.3f\n", m_PosVDest.x, m_PosVDest.y, m_PosVDest.z);
-	CDebugProc::Print("カメラの注視点 : %.3f,%.3f,%.3f\n", m_PosRDest.x, m_PosRDest.y, m_PosRDest.z);*/
+	CDebugProc::Print("カメラの視点 : %.3f,%.3f,%.3f\n", m_PosVDest.x, m_PosVDest.y, m_PosVDest.z);
+	CDebugProc::Print("カメラの注視点 : %.3f,%.3f,%.3f\n", m_PosRDest.x, m_PosRDest.y, m_PosRDest.z);
 }
 
 //============================================

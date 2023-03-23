@@ -99,10 +99,16 @@ HRESULT CApplication::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 		return E_FAIL;
 	}
 
+	//カメラの初期化処理
 	m_pCamera->Init();
+
+	//ライトの初期化処理
 	m_pLight->Init();
+
+	//デバッグ表示の初期化処理
 	m_pDebug->Init();
 
+	//フェードの生成処理
 	CFade::Create(MODE_GAME);
 
 	return S_OK;

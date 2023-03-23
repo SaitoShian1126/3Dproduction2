@@ -35,14 +35,16 @@ public:
 	LPD3DXMESH GetMesh(void);					//メッシュの取得
 	D3DXVECTOR3 GetRot(void);					//向き
 	D3DXVECTOR3 GetPos(void);					//位置の取得
+	D3DXVECTOR3 GetSize(void);					//サイズの取得
 	D3DXVECTOR3 GetVtxMax(void);				//最大の取得
 	D3DXVECTOR3 GetVtxMin(void);				//最小の取得
 
 	//setter
-	void SetMatrix(D3DXMATRIX *matrixparent);	//マトリックスの設定
-	void SetPos(D3DXVECTOR3 pos);				//位置の設定
-	void SetRot(D3DXVECTOR3 rot);				//向きの設定
-	void SetVtxMax(D3DXVECTOR3 max);			//最大の設定
+	void SetMatrix(D3DXMATRIX *matrixparent);				//マトリックスの設定
+	void SetPos(D3DXVECTOR3 pos);							//位置の設定
+	void SetSize(D3DXVECTOR3 vtxmax, D3DXVECTOR3 vtxmin);	//サイズの設定
+	void SetRot(D3DXVECTOR3 rot);							//向きの設定
+	void SetVtxMax(D3DXVECTOR3 max);						//最大の設定
 	void SetVtxMin(D3DXVECTOR3 min);			
 		
 	void SetModel(char * pFile);				//モデルの設定
@@ -55,6 +57,7 @@ private:
 	LPD3DXBUFFER m_pBuffMat;						//バッファ
 	LPD3DXMESH m_pMesh;								//メッシュ
 	D3DXVECTOR3 m_pos;								//位置
+	D3DXVECTOR3 m_size;								//サイズ
 	D3DXVECTOR3 m_rot;								//向き
 	D3DXVECTOR3 m_VtxMinModel;						//最小
 	D3DXVECTOR3 m_VtxMaxModel;						//最大

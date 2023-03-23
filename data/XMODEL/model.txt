@@ -43,36 +43,33 @@ MODEL_FILENAME = data/XMODEL/drum.x					# [30]ÉhÉâÉÄä 
 MODEL_FILENAME = data/XMODEL/weaponbox.x			# [31]ïêäÌî†
 MODEL_FILENAME = data/XMODEL/fence_01.x				# [32]çÚ
 MODEL_FILENAME = data/XMODEL/fence_01.x				# [33]çÚ
-MODEL_FILENAME = data/XMODEL/fence_01.x				# [34]çÚ
+MODEL_FILENAME = data/XMODEL/fence.x				# [34]çÚ
 MODEL_FILENAME = data/XMODEL/fence.x				# [35]çÚ
 MODEL_FILENAME = data/XMODEL/fence.x				# [36]çÚ
-MODEL_FILENAME = data/XMODEL/fence.x				# [37]çÚ
-MODEL_FILENAME = data/XMODEL/fence.x				# [38]çÚ
-MODEL_FILENAME = data/XMODEL/fence.x				# [39]çÚ
-MODEL_FILENAME = data/XMODEL/fence.x				# [40]çÚ
-MODEL_FILENAME = data/XMODEL/fence_01.x				# [41]çÚ
-MODEL_FILENAME = data/XMODEL/fence_01.x				# [42]çÚ
-MODEL_FILENAME = data/XMODEL/fence_01.x				# [43]çÚ
-MODEL_FILENAME = data/XMODEL/flowerbed.x			# [44]â‘íd
-MODEL_FILENAME = data/XMODEL/flowerbed.x			# [45]â‘íd
-MODEL_FILENAME = data/XMODEL/fountain.x				# [46]ï¨êÖ
-MODEL_FILENAME = data/XMODEL/guard.x				# [47]ÉKÅ[Éh
-MODEL_FILENAME = data/XMODEL/guard_01.x				# [48]ÉKÅ[Éh
-MODEL_FILENAME = data/XMODEL/guard_02.x				# [49]ÉKÅ[Éh
-MODEL_FILENAME = data/XMODEL/guard.x				# [50]ÉKÅ[Éh
-MODEL_FILENAME = data/XMODEL/guard_01.x				# [51]ÉKÅ[Éh
-MODEL_FILENAME = data/XMODEL/guard_02.x				# [52]ÉKÅ[Éh
-MODEL_FILENAME = data/XMODEL/machinegun.x			# [53]ã@ä÷èe
+MODEL_FILENAME = data/XMODEL/fence_01.x				# [37]çÚ
+MODEL_FILENAME = data/XMODEL/fence_01.x				# [38]çÚ
+MODEL_FILENAME = data/XMODEL/flowerbed.x			# [39]â‘íd
+MODEL_FILENAME = data/XMODEL/flowerbed.x			# [40]â‘íd
+MODEL_FILENAME = data/XMODEL/fountain.x				# [41]ï¨êÖ
+MODEL_FILENAME = data/XMODEL/guard.x				# [42]ÉKÅ[Éh
+MODEL_FILENAME = data/XMODEL/guard_01.x				# [43]ÉKÅ[Éh
+MODEL_FILENAME = data/XMODEL/guard_02.x				# [44]ÉKÅ[Éh
+MODEL_FILENAME = data/XMODEL/guard.x				# [45]ÉKÅ[Éh
+MODEL_FILENAME = data/XMODEL/guard_01.x				# [46]ÉKÅ[Éh
+MODEL_FILENAME = data/XMODEL/guard_02.x				# [47]ÉKÅ[Éh
+MODEL_FILENAME = data/XMODEL/machinegun.x			# [48]ã@ä÷èe
+MODEL_FILENAME = data/XMODEL/corpse.x				# [49]éÄëÃ
+MODEL_FILENAME = data/XMODEL/corpse.x				# [50]éÄëÃ
+MODEL_FILENAME = data/XMODEL/corpse.x				# [51]éÄëÃ
+MODEL_FILENAME = data/XMODEL/corpse.x				# [52]éÄëÃ
+MODEL_FILENAME = data/XMODEL/corpse.x				# [53]éÄëÃ
 MODEL_FILENAME = data/XMODEL/corpse.x				# [54]éÄëÃ
 MODEL_FILENAME = data/XMODEL/corpse.x				# [55]éÄëÃ
 MODEL_FILENAME = data/XMODEL/corpse.x				# [56]éÄëÃ
 MODEL_FILENAME = data/XMODEL/corpse.x				# [57]éÄëÃ
 MODEL_FILENAME = data/XMODEL/corpse.x				# [58]éÄëÃ
-MODEL_FILENAME = data/XMODEL/corpse.x				# [59]éÄëÃ
-MODEL_FILENAME = data/XMODEL/corpse.x				# [60]éÄëÃ
-MODEL_FILENAME = data/XMODEL/corpse.x				# [61]éÄëÃ
-MODEL_FILENAME = data/XMODEL/corpse.x				# [62]éÄëÃ
-MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
+MODEL_FILENAME = data/XMODEL/ambulance.x			# [59]ã~ã}é‘
+MODEL_FILENAME = data/XMODEL/ambulance_01.x			# [60]ã~ã}é‘
 
 
 #------------------------------------------------------------------------------
@@ -306,73 +303,43 @@ MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
 #----------------------------
 	MODELSET
 		TYPE = 32
-		POS = 530 0 -1000
+		POS = 530 0 -980
 		ROT = 0 0 0
 	END_MODELSET
 
 	MODELSET
 		TYPE = 33
-		POS = 530 0 -920
+		POS = 530 0 -840
 		ROT = 0 0 0
 	END_MODELSET
-
+	
 	MODELSET
 		TYPE = 34
-		POS = 530 0 -860
+		POS = 460 0 -770
 		ROT = 0 0 0
 	END_MODELSET
 	
 	MODELSET
 		TYPE = 35
-		POS = 482 0 -812
+		POS = 222 0 -770
 		ROT = 0 0 0
 	END_MODELSET
 	
 	MODELSET
 		TYPE = 36
-		POS = 322 0 -812
+		POS = 82 0 -770
 		ROT = 0 0 0
 	END_MODELSET
 	
 	MODELSET
 		TYPE = 37
-		POS = 262 0 -812
+		POS = 12 0 -840
 		ROT = 0 0 0
 	END_MODELSET
 	
 	MODELSET
 		TYPE = 38
-		POS = 182 0 -812
-		ROT = 0 0 0
-	END_MODELSET
-	
-	MODELSET
-		TYPE = 39
-		POS = 102 0 -812
-		ROT = 0 0 0
-	END_MODELSET
-	
-	MODELSET
-		TYPE = 40
-		POS = 22 0 -812
-		ROT = 0 0 0
-	END_MODELSET
-	
-	MODELSET
-		TYPE = 41
-		POS = -26 0 -860
-		ROT = 0 0 0
-	END_MODELSET
-	
-	MODELSET
-		TYPE = 42
-		POS = -26 0 -940
-		ROT = 0 0 0
-	END_MODELSET
-	
-	MODELSET
-		TYPE = 43
-		POS = -26 0 -1000
+		POS = 12 0 -980
 		ROT = 0 0 0
 	END_MODELSET
 	
@@ -380,13 +347,13 @@ MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
 # â‘íd
 #----------------------------
 	MODELSET
-		TYPE = 44
+		TYPE = 39
 		POS = 590 0 120
 		ROT = 0 0 0
 	END_MODELSET
 	
 	MODELSET
-		TYPE = 45
+		TYPE = 40
 		POS = 640 0 120
 		ROT = 0 0 0
 	END_MODELSET
@@ -395,7 +362,7 @@ MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
 # ï¨êÖ
 #----------------------------
 	MODELSET
-		TYPE = 46
+		TYPE = 41
 		POS = 615 0 20
 		ROT = 0 0 0
 	END_MODELSET	
@@ -404,37 +371,37 @@ MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
 # ÉKÅ[Éh
 #----------------------------
 	MODELSET
-		TYPE = 47
+		TYPE = 42
 		POS = 1000 0 -520
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 48
+		TYPE = 43
 		POS = 990 0 -550
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 49
+		TYPE = 44
 		POS = 990 0 -490
 		ROT = 0 0 0
 	END_MODELSET	
 	
 		MODELSET
-		TYPE = 50
+		TYPE = 45
 		POS = 767 0 -732
 		ROT = 0 0 0
 	END_MODELSET
 	
 		MODELSET
-		TYPE = 51
+		TYPE = 46
 		POS = 770 0 -700
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 52
+		TYPE = 47
 		POS = 770 0 -764
 		ROT = 0 0 0
 	END_MODELSET
@@ -443,7 +410,7 @@ MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
 # ã@ä÷èe
 #----------------------------
 	MODELSET
-		TYPE = 53
+		TYPE = 48
 		POS = 790 0 -730
 		ROT = 0 0 0
 	END_MODELSET	
@@ -452,64 +419,78 @@ MODEL_FILENAME = data/XMODEL/corpse.x				# [63]éÄëÃ
 # éÄëÃ
 #----------------------------
 	MODELSET
-		TYPE = 54
+		TYPE = 49
 		POS = 443 0 -688
 		ROT = 0 -0.785 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 55
+		TYPE = 50
 		POS = 790 0 -730
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 56
+		TYPE = 51
 		POS = 7 0 -667
 		ROT = 0 0 0
 	END_MODELSET
 	
 	MODELSET
-		TYPE = 57
+		TYPE = 52
 		POS = -58 0 -519
 		ROT = 0 0.785 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 58
+		TYPE = 53
 		POS = 235 0 -274
 		ROT = 0 1.57 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 59
+		TYPE = 54
 		POS = 825 0 -144
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 60
+		TYPE = 55
 		POS = 559 0 40
 		ROT = 0 0.785 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 61
+		TYPE = 56
 		POS = 450 0 -130
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 62
+		TYPE = 57
 		POS = 233 0 90
 		ROT = 0 0 0
 	END_MODELSET	
 	
 	MODELSET
-		TYPE = 63
+		TYPE = 58
 		POS = -70 0 -24
 		ROT = 0 0 0
 	END_MODELSET	
-
+	
+#----------------------------
+# ã~ã}é‘
+#----------------------------
+	MODELSET
+		TYPE = 59
+		POS = 940 0 -720
+		ROT = 0 0 0
+	END_MODELSET	
+	
+	MODELSET
+		TYPE = 60
+		POS = -96 0 -387
+		ROT = 0 0 0
+	END_MODELSET	
 
 END_SCRIPT

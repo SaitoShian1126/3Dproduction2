@@ -83,25 +83,25 @@ void CSpawn::Uninit(void)
 //============================================
 void CSpawn::Update(void)
 {
-	if (CPlayer::GetBullet() != nullptr)
-	{
-		m_EnemyCount = CPlayer::GetBullet()->GetTotalEnemy();
-	}
+	//if (CPlayer::GetBullet() != nullptr)
+	//{
+	//	m_EnemyCount = CPlayer::GetBullet()->GetTotalEnemy();
+	//}
 
-	if (m_EnemyCount < MAX_ENEMY_1 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_1)
-	{
-		m_MaxEnemyFlag = false;
-	}
-	if (m_EnemyCount < MAX_ENEMY_2 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_2)
-	{
-		m_MaxEnemyFlag = false;
-	}
+	//if (m_EnemyCount < MAX_ENEMY_1 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_1)
+	//{
+	//	m_MaxEnemyFlag = false;
+	//}
+	//if (m_EnemyCount < MAX_ENEMY_2 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_2)
+	//{
+	//	m_MaxEnemyFlag = false;
+	//}
 
-	if (m_MaxEnemyFlag == false)
-	{
-		//敵の量産処理の関数呼び出し
-		EnemySpawn();
-	}
+	//if (m_MaxEnemyFlag == false)
+	//{
+	//	//敵の量産処理の関数呼び出し
+	//	EnemySpawn();
+	//}
 }
 
 //============================================
@@ -159,12 +159,12 @@ void CSpawn::EnemySpawn(void)
 
 	if (m_EnemyCreateTime <= 0 && m_RandFlag == false && m_MaxEnemyFlag == false)
 	{
-		m_RandNumber = 1;								//ランダムな数値を決める
-		x = rand() % (1000 - (-135 + 1)) + (-135);		//xの範囲にランダム
-		y = 0.0f;										//yは0.0fに固定
-		z = rand() % (150 - (-1050 + 1)) + (-1050);		//zの範囲にランダム
-		m_EnemySpawnType = rand() % 3 + 1;				//ゾンビの種類ランダム
-		m_RandFlag = true;								//ランダムな数値を決め終わった
+		m_RandNumber = 1;										//ランダムな数値を決める
+		x = (float)(rand() % (1000 - (-135 + 1)) + (-135));		//xの範囲にランダム
+		y = 0.0f;												//yは0.0fに固定
+		z = (float)(rand() % (150 - (-1050 + 1)) + (-1050));	//zの範囲にランダム
+		m_EnemySpawnType = rand() % 3 + 1;						//ゾンビの種類ランダム
+		m_RandFlag = true;										//ランダムな数値を決め終わった
 	}
 	//ウェーブ1
 	if (m_EnemyCreateTime <= 0 && m_WaveTime <= WAVE_TIME)

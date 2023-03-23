@@ -133,15 +133,15 @@ HRESULT CMeshField::Init(void)
 		//x•ûŒü‚ÌŒJ‚è•Ô‚µ
 		for (nCntMeshFieldX = 0; nCntMeshFieldX < MESHFIELD_X_BLOCK + 1; nCntMeshFieldX++)
 		{
-			pIdx[0] = (MESHFIELD_X_BLOCK + 1) + nCntMeshFieldX + nCntMeshFieldZ * (MESHFIELD_X_BLOCK + 1);
-			pIdx[1] = (MESHFIELD_X_BLOCK + 1) + nCntMeshFieldX + nCntMeshFieldZ * (MESHFIELD_X_BLOCK + 1) - (MESHFIELD_X_BLOCK + 1);
+			pIdx[0] = (WORD)((MESHFIELD_X_BLOCK + 1) + nCntMeshFieldX + nCntMeshFieldZ * (MESHFIELD_X_BLOCK + 1));
+			pIdx[1] = (WORD)((MESHFIELD_X_BLOCK + 1) + nCntMeshFieldX + nCntMeshFieldZ * (MESHFIELD_X_BLOCK + 1) - (MESHFIELD_X_BLOCK + 1));
 			pIdx += 2;	//pIdx‚ð2‰ÁŽZ‚·‚é
 		}
 		//k‘Þƒ|ƒŠƒSƒ“‚ÌÝ’è
 		if (nCntMeshFieldZ != MESHFIELD_Z_BLOCK)
 		{
-			pIdx[0] = (MESHFIELD_X_BLOCK + 1) * nCntMeshFieldZ + MESHFIELD_X_BLOCK;
-			pIdx[1] = (MESHFIELD_X_BLOCK + 1) * (nCntMeshFieldZ + 2);
+			pIdx[0] = (WORD)((MESHFIELD_X_BLOCK + 1) * nCntMeshFieldZ + MESHFIELD_X_BLOCK);
+			pIdx[1] = (WORD)((MESHFIELD_X_BLOCK + 1) * (nCntMeshFieldZ + 2));
 			pIdx += 2;	//pIdx‚ð2‰ÁŽZ‚·‚é
 		}
 	}

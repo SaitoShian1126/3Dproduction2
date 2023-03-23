@@ -19,7 +19,7 @@
 //============================================
 // 静的メンバ変数宣言
 //============================================
-LPDIRECT3DTEXTURE9 CWarning::m_pTexture[MAX_TEXTURE] = {};
+LPDIRECT3DTEXTURE9 CWarning::m_pTexture[MAX_WARNING_TEXTURE] = {};
 
 //============================================
 // Warningのコンストラクタ
@@ -214,7 +214,7 @@ HRESULT CWarning::Load(void)
 //============================================
 void CWarning::Unload(void)
 {
-	for (int nCnt = 0; nCnt < MAX_TEXTURE; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_WARNING_TEXTURE; nCnt++)
 	{
 		//テクスチャの破棄
 		if (m_pTexture[nCnt] != nullptr)

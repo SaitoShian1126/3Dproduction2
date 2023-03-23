@@ -625,8 +625,7 @@ void CPlayer::MotionAnimation(void)
 		{	//再生中のキー数カウントがキー数の最大値を超えたとき
 
 			m_MotionSet[m_MotionType]->SetLoop(false);		//ループをfalseに設定する	
-			m_MotionType = MOTIONTYPE_NEUTRALMOTION;		//モーションをニュートラルモーションにする
-			//NextKeySet = 0;								//次のキーセットの初期化
+			m_MotionType = MOTIONTYPE_NEUTRALMOTION;		//モーションをニュートラルモーションにする		
 		}
 
 		for (int nCnt = 0; nCnt < MODEL_NUMBER; nCnt++)
@@ -1128,7 +1127,7 @@ void CPlayer::PlayerMove(void)
 	//向きの設定
 	m_rot = PlayerRot;
 	//デバック表示
-	//CDebugProc::Print("プレイヤーの向いてる角度:%f\nプレイヤーの高さ:%.2f\nプレイヤーのX位置:%f\nプレイヤーのZ位置:%f\n", PlayerRot.y, m_pos.y, m_pos.x, m_pos.z);
+	CDebugProc::Print("プレイヤーの向いてる角度:%f\nプレイヤーの高さ:%.2f\nプレイヤーのX位置:%f\nプレイヤーのZ位置:%f\n", PlayerRot.y, m_pos.y, m_pos.x, m_pos.z);
 }
 
 //============================================

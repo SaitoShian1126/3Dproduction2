@@ -20,8 +20,8 @@
 //============================================
 // マクロ定義
 //============================================
-#define MAX_TEXTURE		(2)			//テクスチャの最大数
-#define RELEASE_TIME	(300)		//破棄するまでの時間
+#define MAX_WARNING_TEXTURE		(2)					//テクスチャの最大数
+#define RELEASE_TIME			(300)				//破棄するまでの時間
 
 //============================================
 // 前方宣言
@@ -57,12 +57,12 @@ public:
 	static void Unload(void);				//テクスチャの破棄
 
 private:
-	static LPDIRECT3DTEXTURE9 m_pTexture[MAX_TEXTURE];	//テクスチャへのポインタ
-	D3DXCOLOR m_col;									//色
-	WARNINGTYPE m_type;									//Warningの種類
+	static LPDIRECT3DTEXTURE9 m_pTexture[MAX_WARNING_TEXTURE];	//テクスチャへのポインタ
+	D3DXCOLOR m_col;											//色
+	WARNINGTYPE m_type;											//Warningの種類
 
-	int m_nUninitTimer;									//破棄までの時間
-	bool m_flag;										//フラグ
+	int m_nUninitTimer;											//破棄までの時間
+	bool m_flag;												//フラグ
 };
 
 #endif

@@ -336,6 +336,8 @@ void CModel::Vtx(void)
 		m_apModel[nCnt]->SetVtxMin(min);
 		m_apModel[nCnt]->SetVtxMax(max);
 
+		//モデルのサイズ
+		m_apModel[nCnt]->SetSize(max,min);
 	}
 }
 

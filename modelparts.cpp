@@ -167,7 +167,7 @@ void CModelParts::DrawFile(void)
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 		// テクスチャの設定
-		//pDevice->SetTexture(0, m_pTexture[nCntMat]);
+		pDevice->SetTexture(0, m_pTexture[nCntMat]);
 
 		//モデルパーツの描画
 		m_pMesh->DrawSubset(nCntMat);
@@ -212,6 +212,14 @@ D3DXVECTOR3 CModelParts::GetPos(void)
 }
 
 //============================================
+// サイズの取得
+//============================================
+D3DXVECTOR3 CModelParts::GetSize(void)
+{
+	return m_size;
+}
+
+//============================================
 // 最大の取得
 //============================================
 D3DXVECTOR3 CModelParts::GetVtxMax(void)
@@ -233,6 +241,15 @@ D3DXVECTOR3 CModelParts::GetVtxMin(void)
 void CModelParts::SetPos(D3DXVECTOR3 pos)
 {
 	m_pos = pos;
+}
+
+//============================================
+// サイズの設定
+//============================================
+void CModelParts::SetSize(D3DXVECTOR3 vtxmax, D3DXVECTOR3 vtxmin)
+{
+	//モデルサイズ
+	m_size = D3DXVECTOR3(vtxmax.x - vtxmin.x, vtxmax.y - vtxmin.y, vtxmax.z - vtxmin.z);
 }
 
 //============================================
@@ -310,26 +327,26 @@ void CModelParts::SetModel(char * pFile)
 		&m_pNumMat,
 		&m_pMesh);
 
-	//// テクスチャ
-	//m_pTexture = new LPDIRECT3DTEXTURE9[m_pNumMat];
+	// テクスチャ
+	m_pTexture = new LPDIRECT3DTEXTURE9[m_pNumMat];
 
-	////情報が入ってなかったら
-	//assert(m_pTexture != nullptr);
+	//情報が入ってなかったら
+	assert(m_pTexture != nullptr);
 
-	//// バッファの先頭ポインタをD3DXMATERIALにキャストして取得
-	//D3DXMATERIAL *pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+	// バッファの先頭ポインタをD3DXMATERIALにキャストして取得
+	D3DXMATERIAL *pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
 
-	//// 各メッシュのマテリアル情報を取得する
-	//for (int nCntMat = 0; nCntMat < (int)m_pNumMat; nCntMat++)
-	//{
-	//	//情報の初期化
-	//	m_pTexture[nCntMat] = nullptr;
+	// 各メッシュのマテリアル情報を取得する
+	for (int nCntMat = 0; nCntMat < (int)m_pNumMat; nCntMat++)
+	{
+		//情報の初期化
+		m_pTexture[nCntMat] = nullptr;
 
-	//	//ポリゴンに貼り付けるテクスチャの読み込み
-	//	D3DXCreateTextureFromFile(pDevice,
-	//		pMat[nCntMat].pTextureFilename,
-	//		&m_pTexture[nCntMat]);
-	//}
+		//ポリゴンに貼り付けるテクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,
+			pMat[nCntMat].pTextureFilename,
+			&m_pTexture[nCntMat]);
+	}
 }
 
 //============================================

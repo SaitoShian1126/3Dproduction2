@@ -22,7 +22,7 @@
 //============================================
 #define INDICATION_SIZE_X		 (20.0f)	//表示のxサイズ
 #define INDICATION_SIZE_Y		 (25.0f)	//表示のyサイズ
-#define MAX_TEXTURE				 (4)		//テクスチャの最大数
+#define MAX_INDICATION_TEXTURE	 (4)		//テクスチャの最大数
 #define RELEASE_TIME			 (300)		//破棄するまでの時間
 
 //============================================
@@ -61,14 +61,14 @@ public:
 	static void Unload(void);				//テクスチャの破棄
 
 private:
-	static LPDIRECT3DTEXTURE9 m_pTexture[MAX_TEXTURE];	//テクスチャへのポインタ
-	D3DXCOLOR m_col;									//色
-	INDICATIONTYPE m_nType;								//表示の種類
-	int m_nUninitTimer;									//削除時間
-	int m_Bomb;											//爆弾
-	bool m_flag;										//フラグ
-	bool m_ColorFlag;									//色のフラグ
-	bool m_BloodFlag;									//血が出たかのフラグ
+	static LPDIRECT3DTEXTURE9 m_pTexture[MAX_INDICATION_TEXTURE];	//テクスチャへのポインタ
+	D3DXCOLOR m_col;												//色
+	INDICATIONTYPE m_nType;											//表示の種類
+	int m_nUninitTimer;												//削除時間
+	int m_Bomb;														//爆弾
+	bool m_flag;													//フラグ
+	bool m_ColorFlag;												//色のフラグ
+	bool m_BloodFlag;												//血が出たかのフラグ
 };
 
 #endif

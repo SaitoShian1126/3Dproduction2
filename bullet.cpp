@@ -28,6 +28,7 @@
 #include "indication.h"
 #include "particle.h"
 #include "camera.h"
+#include "modelparts.h"
 
 //============================================
 // 静的メンバ変数宣言
@@ -41,10 +42,14 @@ CBullet::CBullet()
 	//============================================
 	//メンバ変数のクリア
 	//============================================
-	m_BulletPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_BulletMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_EnemyDeathFlag = false;
-	m_GimmickUninitFlag = false;
+	m_BulletPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//弾の位置のクリア
+	m_BulletPosOld = D3DXVECTOR3(0.0f,0.0f,0.0f);			//弾の前回の位置のクリア
+	m_BulletMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//弾の移動のクリア
+	m_BulletSize = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//弾のサイズのクリア
+	m_EnemyDeathFlag = false;								//敵が死んだのかフラグのクリア
+	m_GimmickUninitFlag = false;							//ギミックが消えたのかフラグのクリア
+	m_RandFlag = false;										//ランダムフラグのクリア
+	m_BossDeathFlag = false;								//ボスが死んだのかのフラグのクリア							
 }
 
 //============================================
@@ -64,16 +69,15 @@ HRESULT CBullet::Init(void)
 	//メンバ変数の初期化
 	//============================================
 	m_BulletPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_BulletPosOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_BulletMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_ExplosionTime = 200;
 	m_BulletSize = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_EnemyDeathFlag = false;
 	m_GimmickUninitFlag = false;
-	m_BulletMoveFlag = false;
 	m_RandFlag = false;
 	m_BossDeathFlag = false;
-	m_nBulletExplosionTime = 150;
-	m_ExplosionTime = 50;
-	m_ResultTime = 200;
+	m_ExplosionFlag = false;
 
 	//オブジェクト基礎の初期化処理
 	CObjectBase::Init();
@@ -116,12 +120,16 @@ void CBullet::Update(void)
 	D3DXVECTOR3 BulletPos = GetPos();
 	D3DXVECTOR3 BulletMove = GetMove();
 	D3DXVECTOR3 BulletSize = GetSize();
+	int BulletLife = GetBulletLife();
 
 	//カメラの情報を取得
 	CCamera *pCamera = CApplication::GetCamera();
 
 	//弾の位置更新
 	BulletPos += BulletMove;
+
+	//前回の位置を保存
+	m_BulletPosOld = m_BulletPos;
 
 	//寿命を減らす処理
 	m_nLife--;
@@ -146,36 +154,51 @@ void CBullet::Update(void)
 		return;
 	}
 
-	//ボスの弾の攻撃処理
-	if (m_type == BULLETTYPE_BOSS && CSpawn::GetBoss() != nullptr)
+	//============================================
+	// ボスの弾の攻撃処理
+	//============================================
+	if (m_type == BULLETTYPE_BOSS && CSpawn::GetBoss() != nullptr && CBoss::GetBullet() != nullptr)
 	{
 		BossBullet(BulletPos, BulletSize, BulletMove);
 	}
 
-	//弾(爆弾)とボスの当たり判定
+	//============================================
+	// 弾(爆弾)とボスの当たり判定
+	//============================================
 	if (m_type == BULLETTYPE_BOMB && CSpawn::GetBoss() != nullptr)
 	{
 		BombHitBoss(BulletPos, D3DXVECTOR3(BOMB_SIZE, BOMB_SIZE, 0.0f));
 	}
 
-	//弾とギミックの当たり判定
+	//============================================
+	// 弾とギミックの当たり判定
+	//============================================
 	if (m_GimmickUninitFlag == false)
 	{
 		HitGimmick(BulletPos);
 	}
-	//弾とボスの当たり判定処理
+
+	HitModel(BulletPos);
+
+	//============================================
+	// 弾とボスの当たり判定処理
+	//============================================
 	if (CSpawn::GetBoss() != nullptr && m_type == CBullet::BULLETTYPE_PLAYER)
 	{
 		HitBoss(BulletPos);
 	}
 
-	//弾と敵の当たり判定処理
+	//============================================
+	// 弾と敵の当たり判定処理
+	//============================================
 	if (m_EnemyDeathFlag == false && m_type != CBullet::BULLETTYPE_BOSS)
 	{
 		HitEnemy(BulletPos);
 	}
 
-	//ボスの弾の誘導処理
+	//============================================
+	// ボスの弾の誘導処理
+	//============================================
 	if (m_type == CBullet::BULLETTYPE_BOSS)
 	{
 		BulletBehavior();
@@ -188,7 +211,9 @@ void CBullet::Update(void)
 	//サイズの設定処理
 	SetSize(BulletSize);
 
-	//オブジェクト基礎の更新処理
+	//============================================
+	// オブジェクト基礎の更新処理
+	//============================================
 	CObjectBase::Update();
 }
 
@@ -229,6 +254,14 @@ CBullet *CBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, in
 	}
 
 	return pBullet;
+}
+
+//============================================
+// 弾のライフの設定処理
+//============================================
+void CBullet::SetLife(int life)
+{
+	m_nLife = life;
 }
 
 //============================================
@@ -371,6 +404,32 @@ void CBullet::HitGimmick(D3DXVECTOR3 pos)
 }
 
 //============================================
+// 弾とモデルの当たり判定
+//============================================
+void CBullet::HitModel(D3DXVECTOR3 pos)
+{
+	for (int nCnt = 0; nCnt < NUMBER_OF_MODELS; nCnt++)
+	{
+		//モデルの位置
+		D3DXVECTOR3 ModelPos = CGame::GetModel()->GetModelParts()[nCnt]->GetPos();
+		//モデルのサイズ
+		D3DXVECTOR3 ModelSize = CGame::GetModel()->GetModelParts()[nCnt]->GetSize();
+
+		//弾とギミックの当たり判定
+		if (pos.x + 0.5f >= ModelPos.x - ModelSize.x
+			&&pos.x - 0.5f <= ModelPos.x + ModelSize.x
+			&&pos.y + 0.5f >= ModelPos.y - ModelSize.y
+			&&pos.y - 0.5f <= ModelPos.y + ModelSize.y
+			&&pos.z + 0.5f >= ModelPos.z - ModelSize.z
+			&&pos.z - 0.5f <= ModelPos.z + ModelSize.z)
+		{
+			//弾の削除
+			BulletLife();
+		}
+	}
+}
+
+//============================================
 // 弾とボスの当たり判定
 //============================================
 void CBullet::HitBoss(D3DXVECTOR3 pos)
@@ -441,9 +500,9 @@ void CBullet::BulletBehavior()
 	BulletMove *= -5.0f;							//移動スピード
 
 	//移動量減衰
-	m_BulletPos.x += (0.0f - BulletMove.x) * 0.1f;
-	m_BulletPos.y += (0.0f - BulletMove.y) * 0.1f;
-	m_BulletPos.z += (0.0f - BulletMove.z) * 0.1f;
+	BulletPos.x += (0.0f - BulletMove.x) * 0.1f;
+	BulletPos.y += (0.0f - BulletMove.y) * 0.1f;
+	BulletPos.z += (0.0f - BulletMove.z) * 0.1f;
 
 	//移動の設定
 	SetMove(BulletMove);
@@ -500,38 +559,64 @@ void CBullet::BossBullet(D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 move)
 	D3DXVECTOR3 PlayerPos = CGame::GetPlayer()->GetPlayerPos();
 	D3DXVECTOR3 PlayerSize = CGame::GetPlayer()->GetPlayerSize();
 	int PlayerLife = CGame::GetPlayer()->GetLife();
-	move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	//サウンドの再生
-	PlaySound(SOUND_LABEL_SE_BOSSATTACK);
-	CExplosion::Create(D3DXVECTOR3(pos.x, pos.y + 20.0f, pos.z), D3DXVECTOR3(25.0f, 25.0f, 0.0f));
-
-	//追従爆発弾の爆発範囲
-	if (PlayerPos.x + PlayerSize.x >= pos.x - size.x && PlayerPos.x - PlayerSize.x <= pos.x + size.x
-		&& PlayerPos.z + PlayerSize.z >= pos.z - size.z && PlayerPos.z - PlayerSize.z <= pos.z + size.z)
+	m_ExplosionTime--;
+	if (m_ExplosionTime <= 0)
 	{
-		PlayerLife -= 2;
-		if (PlayerLife <= 0)
+		move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		m_ExplosionFlag = true;
+		if (m_ExplosionFlag == true)
 		{
-			CFade::SetFade(CApplication::MODE_RESULT);
-			CResult::SetType(CResult::TYPE_GAMEOVER);
-		}
-		else
-		{
-			if (m_RandFlag == false)
+			//サウンドの再生
+			PlaySound(SOUND_LABEL_SE_BOSSATTACK);
+			CExplosion::Create(D3DXVECTOR3(pos.x, pos.y + 20.0f, pos.z), D3DXVECTOR3(25.0f, 25.0f, 0.0f));
+			m_ExplosionTime = 200;
+			m_ExplosionFlag = false;
+
+			if (CBoss::GetBullet() != nullptr)
 			{
-				for (int nCnt = 0; nCnt < 20; nCnt++)
-				{
-					float x = (float)(rand() % 1280 + 1);
-					float y = (float)(rand() % 720 + 1);
-					float sxy = (float)(rand() % 75 + 15);
-					CIndication::Create(D3DXVECTOR3(x, y, 0.0f), D3DXVECTOR3(sxy, sxy, 0.0f), CIndication::INDICATIONTYPE_BLOOD);
-				}
-				m_RandFlag = true;
+				m_nLife = 0;
+				SetLife(m_nLife);
 			}
-			CGame::GetPlayer()->SetPlayerLife(PlayerLife);
 		}
+
+		//追従爆発弾の爆発範囲
+		if (PlayerPos.x + PlayerSize.x >= pos.x - size.x && PlayerPos.x - PlayerSize.x <= pos.x + size.x
+			&& PlayerPos.z + PlayerSize.z >= pos.z - size.z && PlayerPos.z - PlayerSize.z <= pos.z + size.z)
+		{
+			PlayerLife -= 2;
+			if (PlayerLife <= 0)
+			{
+				CFade::SetFade(CApplication::MODE_RESULT);
+				CResult::SetType(CResult::TYPE_GAMEOVER);
+			}
+			else
+			{
+				if (m_RandFlag == false)
+				{
+					for (int nCnt = 0; nCnt < 20; nCnt++)
+					{
+						float x = (float)(rand() % 1280 + 1);
+						float y = (float)(rand() % 720 + 1);
+						float sxy = (float)(rand() % 75 + 15);
+						CIndication::Create(D3DXVECTOR3(x, y, 0.0f), D3DXVECTOR3(sxy, sxy, 0.0f), CIndication::INDICATIONTYPE_BLOOD);
+					}
+					m_RandFlag = true;
+				}
+				CGame::GetPlayer()->SetPlayerLife(PlayerLife);
+			}
+		}
+		//移動の設定
+		SetMove(move);
 	}
-	//移動の設定
-	SetMove(move);
+}
+
+//============================================
+// 弾の体力
+//============================================
+void CBullet::BulletLife()
+{
+	//弾の削除
+	m_nLife = 0;
+	SetLife(m_nLife);
 }

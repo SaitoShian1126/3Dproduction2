@@ -19,7 +19,7 @@
 //============================================
 // 静的メンバ変数宣言
 //============================================
-LPDIRECT3DTEXTURE9 CIndication::m_pTexture[MAX_TEXTURE] = {};
+LPDIRECT3DTEXTURE9 CIndication::m_pTexture[MAX_INDICATION_TEXTURE] = {};
 
 //============================================
 // 表示のコンストラクタ
@@ -222,7 +222,7 @@ HRESULT CIndication::Load(void)
 //============================================
 void CIndication::Unload(void)
 {
-	for (int nCnt = 0; nCnt < MAX_TEXTURE; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_INDICATION_TEXTURE; nCnt++)
 	{
 		//テクスチャの破棄
 		if (m_pTexture[nCnt] != nullptr)

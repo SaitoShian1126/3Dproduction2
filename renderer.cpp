@@ -184,9 +184,6 @@ void CRenderer::Update(void)
 //============================================
 void CRenderer::Draw(void)
 {
-	//GetDeviveの取得
-	LPDIRECT3DDEVICE9 pDevice = CApplication::GetRenderer()->GetDevice();
-
 	CApplication::GetCamera()->SetCamera();
 
 	// バックバッファ＆Ｚバッファのクリア
