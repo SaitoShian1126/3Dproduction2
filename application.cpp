@@ -109,7 +109,7 @@ HRESULT CApplication::Init(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 	m_pDebug->Init();
 
 	//フェードの生成処理
-	CFade::Create(MODE_GAME);
+	CFade::Create(MODE_TITLE);
 
 	return S_OK;
 }

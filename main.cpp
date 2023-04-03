@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	pApplication = new CApplication;
 
 	// 初期化処理
-	if (FAILED(pApplication->Init(hInstance, hWnd, true)))    //画面サイズ
+	if (FAILED(pApplication->Init(hInstance, hWnd, false)))    //画面サイズ
 	{//初期化処理が失敗した場合
 		return -1;
 	}

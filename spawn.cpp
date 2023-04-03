@@ -83,25 +83,25 @@ void CSpawn::Uninit(void)
 //============================================
 void CSpawn::Update(void)
 {
-	//if (CPlayer::GetBullet() != nullptr)
-	//{
-	//	m_EnemyCount = CPlayer::GetBullet()->GetTotalEnemy();
-	//}
+	if (CPlayer::GetBullet() != nullptr)
+	{
+		m_EnemyCount = CPlayer::GetBullet()->GetTotalEnemy();
+	}
 
-	//if (m_EnemyCount < MAX_ENEMY_1 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_1)
-	//{
-	//	m_MaxEnemyFlag = false;
-	//}
-	//if (m_EnemyCount < MAX_ENEMY_2 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_2)
-	//{
-	//	m_MaxEnemyFlag = false;
-	//}
+	if (m_EnemyCount < MAX_ENEMY_1 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_1)
+	{
+		m_MaxEnemyFlag = false;
+	}
+	if (m_EnemyCount < MAX_ENEMY_2 && m_EnemyCreateTime == ENEMY_CREATE_TIME_WAVE_2)
+	{
+		m_MaxEnemyFlag = false;
+	}
 
-	//if (m_MaxEnemyFlag == false)
-	//{
-	//	//“G‚Ì—ÊŽYˆ—‚ÌŠÖ”ŒÄ‚Ño‚µ
-	//	EnemySpawn();
-	//}
+	if (m_MaxEnemyFlag == false)
+	{
+		//“G‚Ì—ÊŽYˆ—‚ÌŠÖ”ŒÄ‚Ño‚µ
+		EnemySpawn();
+	}
 }
 
 //============================================

@@ -1127,7 +1127,7 @@ void CPlayer::PlayerMove(void)
 	//向きの設定
 	m_rot = PlayerRot;
 	//デバック表示
-	CDebugProc::Print("プレイヤーの向いてる角度:%f\nプレイヤーの高さ:%.2f\nプレイヤーのX位置:%f\nプレイヤーのZ位置:%f\n", PlayerRot.y, m_pos.y, m_pos.x, m_pos.z);
+	//CDebugProc::Print("プレイヤーの向いてる角度:%f\nプレイヤーの高さ:%.2f\nプレイヤーのX位置:%f\nプレイヤーのZ位置:%f\n", PlayerRot.y, m_pos.y, m_pos.x, m_pos.z);
 }
 
 //============================================

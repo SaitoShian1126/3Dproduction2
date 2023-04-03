@@ -178,7 +178,7 @@ void CBullet::Update(void)
 		HitGimmick(BulletPos);
 	}
 
-	HitModel(BulletPos);
+	//HitModel(BulletPos);
 
 	//============================================
 	// ’e‚Æƒ{ƒX‚Ì“–‚½‚è”»’èˆ—

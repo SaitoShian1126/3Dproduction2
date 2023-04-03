@@ -112,7 +112,7 @@ HRESULT CGame::Init(void)
 	//============================================
 	m_pMeshField = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));													//メッシュフィールドの生成
 	m_Model = CModel::Create();																							//モデルの生成
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(117.0f, 0.0f, -700.0f));													//プレイヤーの生成
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));															//プレイヤーの生成
 	m_pSpawn = CSpawn::Create();																						//敵の生成
 	CSkyBox::Create(D3DXVECTOR3(400.0f, 0.0f, -460.0f));																//スカイボックスの生成
 	CFire::Create(D3DXVECTOR3(400.0f, 35.0f, -100.0f),D3DXVECTOR3(50.0f,75.0f,0.0f));									//炎の生成
